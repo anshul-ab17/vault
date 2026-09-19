@@ -1,4 +1,4 @@
-﻿# VAULT — Programmable Escrow for Small Business Tasks
+# VAULT — Programmable Escrow for Small Business Tasks
 
 > **Funds secured. Work delivered. Rewards released.**
 
@@ -9,7 +9,7 @@ VAULT is a Solana-powered task funding and non-custodial escrow platform designe
 - **Finite State Machine (FSM)**: Strict, deterministic transitions (`Draft` -> `Funded` -> `InProgress` -> `Submitted` -> `Approved` -> `Paid`).
 - **SaaS Pricing & Fee Engine**: Free, Starter (₹499/mo, 5%), and Business (₹1,499/mo, 3%) plans.
 - **Event Audit Log**: Append-only event history for all task actions and settlements.
-- **Darwin-inspired UI**: Minimalist, high-performance Next.js 15 interface.
+- **Modern Minimalist UI**: High-performance Next.js 15 interface with tactile micro-interactions.
 
 ## Monorepo Structure
 - `apps/web`: Next.js 15 App Router + Tailwind CSS + Solana Wallet Adapter
