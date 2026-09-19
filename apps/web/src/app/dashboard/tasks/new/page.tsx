@@ -41,7 +41,7 @@ export default function NewTaskPage() {
     if (!title.trim() || !rewardSOL) return;
     setIsSubmitting(true);
 
-    const taskId = `task-${Date.now()}`;
+    const taskId = `bounty-${Date.now()}`;
     const sponsorWallet = publicKey ? publicKey.toBase58() : "Sponsor...123";
 
     const newTask: EscrowTask = {
@@ -97,64 +97,64 @@ export default function NewTaskPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-5 sm:px-8 py-10 space-y-6">
+    <div className="max-w-2xl mx-auto px-6 sm:px-10 py-12 space-y-8">
       <div>
-        <span className="text-[11px] font-mono uppercase tracking-widest text-[#6c4dd1]">
-          NEW ESCROW PDA
+        <span className="text-[11px] font-mono uppercase tracking-widest text-[#9e7b4f]">
+          PROGRAM DERIVED COVENANT
         </span>
-        <h1 className="text-[28px] font-[500] text-[#18181b] tracking-tight mt-0.5">
-          Create & Fund Task
+        <h1 className="text-[32px] sm:text-[38px] font-[400] text-[#141414] tracking-tight mt-1">
+          Inscribe & Fund Escrow
         </h1>
-        <p className="text-[14px] text-[#71717a] mt-0.5">
+        <p className="text-[14.5px] text-[#736f68] mt-1">
           Specify acceptance rules and lock SOL into a deterministic Solana escrow account.
         </p>
       </div>
 
-      <div className="vault-card p-6 sm:p-8 space-y-6">
-        <div className="space-y-1.5">
-          <label className="text-[11px] font-mono text-[#71717a] uppercase tracking-wider">
-            TASK TITLE
+      <div className="vault-card p-7 sm:p-9 space-y-7 bg-white">
+        <div className="space-y-2">
+          <label className="text-[11px] font-mono text-[#736f68] uppercase tracking-widest">
+            BOUNTY TITLE
           </label>
           <input
             type="text"
-            placeholder="e.g. Build Mobile-friendly QR Menu Generator"
+            placeholder="e.g. Build Editorial Product Showcase with WebGL"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full bg-white border border-[#e4e4e7] rounded-[10px] px-4 py-2.5 text-[13.5px] text-[#18181b] shadow-xs focus:outline-none focus:border-[#6c4dd1]"
+            className="w-full bg-white border border-[#e7e2d8] rounded-[6px] px-4 py-3 text-[14px] text-[#141414] shadow-xs focus:outline-none focus:border-[#141414]"
           />
         </div>
 
-        <div className="space-y-1.5">
-          <label className="text-[11px] font-mono text-[#71717a] uppercase tracking-wider">
-            SCOPE & REQUIREMENTS
+        <div className="space-y-2">
+          <label className="text-[11px] font-mono text-[#736f68] uppercase tracking-widest">
+            SPECIFICATION & CONSTRAINTS
           </label>
           <textarea
             rows={3}
             placeholder="Describe deliverables, technical constraints, test specifications..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full bg-white border border-[#e4e4e7] rounded-[10px] px-4 py-2.5 text-[13.5px] text-[#18181b] shadow-xs focus:outline-none focus:border-[#6c4dd1]"
+            className="w-full bg-white border border-[#e7e2d8] rounded-[6px] px-4 py-3 text-[14px] text-[#141414] shadow-xs focus:outline-none focus:border-[#141414]"
           />
         </div>
 
-        <div className="space-y-2">
-          <label className="text-[11px] font-mono text-[#71717a] uppercase tracking-wider">
-            ACCEPTANCE CRITERIA
+        <div className="space-y-2.5">
+          <label className="text-[11px] font-mono text-[#736f68] uppercase tracking-widest">
+            ACCEPTANCE INVARIANTS
           </label>
           <div className="space-y-2">
             {criteria.map((c, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between p-3 rounded-lg bg-[#f8f8fa] border border-[#e4e4e7] text-[13px] text-[#18181b]"
+                className="flex items-center justify-between p-3 rounded-md bg-[#f5f2eb] border border-[#e7e2d8] text-[13.5px] text-[#141414]"
               >
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="size-3.5 text-emerald-600 shrink-0" />
+                <div className="flex items-center gap-2.5">
+                  <CheckCircle2 className="size-4 text-emerald-700 shrink-0" />
                   <span>{c}</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => handleRemoveCrit(i)}
-                  className="text-[#a1a1aa] hover:text-[#18181b]"
+                  className="text-[#a6a096] hover:text-[#141414]"
                 >
                   <X className="size-3.5" />
                 </button>
@@ -162,28 +162,28 @@ export default function NewTaskPage() {
             ))}
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <input
               type="text"
-              placeholder="Add requirement..."
+              placeholder="Add invariant requirement..."
               value={newCrit}
               onChange={(e) => setNewCrit(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddCrit())}
-              className="flex-1 bg-white border border-[#e4e4e7] rounded-[10px] px-3.5 py-2 text-[13px] text-[#18181b] focus:outline-none focus:border-[#6c4dd1]"
+              className="flex-1 bg-white border border-[#e7e2d8] rounded-[6px] px-4 py-2.5 text-[13.5px] text-[#141414] focus:outline-none focus:border-[#141414]"
             />
             <button
               type="button"
               onClick={handleAddCrit}
-              className="vault-btn-secondary h-9 px-3.5 text-[12px] font-medium"
+              className="vault-btn-secondary h-10 px-4 text-[12.5px] font-medium"
             >
               Add
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-mono text-[#71717a] uppercase tracking-wider">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="space-y-2">
+            <label className="text-[11px] font-mono text-[#736f68] uppercase tracking-widest">
               REWARD (SOL)
             </label>
             <input
@@ -192,45 +192,45 @@ export default function NewTaskPage() {
               min="0.05"
               value={rewardSOL}
               onChange={(e) => setRewardSOL(parseFloat(e.target.value) || 0)}
-              className="w-full bg-white border border-[#e4e4e7] rounded-[10px] px-4 py-2 text-[13.5px] text-[#18181b] shadow-xs focus:outline-none focus:border-[#6c4dd1]"
+              className="w-full bg-white border border-[#e7e2d8] rounded-[6px] px-4 py-2.5 text-[14px] text-[#141414] shadow-xs focus:outline-none focus:border-[#141414]"
             />
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-mono text-[#71717a] uppercase tracking-wider">
-              DEADLINE
+          <div className="space-y-2">
+            <label className="text-[11px] font-mono text-[#736f68] uppercase tracking-widest">
+              TARGET DATE
             </label>
             <input
               type="date"
               value={deadline}
               onChange={(e) => setDeadline(e.target.value)}
-              className="w-full bg-white border border-[#e4e4e7] rounded-[10px] px-4 py-2 text-[13.5px] text-[#18181b] shadow-xs focus:outline-none focus:border-[#6c4dd1]"
+              className="w-full bg-white border border-[#e7e2d8] rounded-[6px] px-4 py-2.5 text-[14px] text-[#141414] shadow-xs focus:outline-none focus:border-[#141414]"
             />
           </div>
         </div>
 
         {/* Financials Breakdown */}
-        <div className="p-4 rounded-xl bg-[#f8f8fa] border border-[#e4e4e7] space-y-1.5 text-[12px] font-mono">
-          <div className="flex justify-between text-[#71717a]">
-            <span>Contributor Reward:</span>
-            <span className="text-[#18181b] font-medium">{financials.rewardAmountSOL} SOL</span>
+        <div className="p-5 rounded-lg bg-[#f5f2eb] border border-[#e7e2d8] space-y-2 text-[12.5px] font-mono">
+          <div className="flex justify-between text-[#736f68]">
+            <span>Artisan Reward:</span>
+            <span className="text-[#141414] font-medium">{financials.rewardAmountSOL} SOL</span>
           </div>
-          <div className="flex justify-between text-[#71717a]">
-            <span>Platform Fee ({financials.platformFeePercent}% - {plan} Plan):</span>
+          <div className="flex justify-between text-[#736f68]">
+            <span>Protocol Fee ({financials.platformFeePercent}% - {plan} Tier):</span>
             <span>{financials.platformFeeSOL} SOL</span>
           </div>
-          <div className="flex justify-between text-[#18181b] font-semibold pt-2 border-t border-[#e4e4e7] text-[13px]">
-            <span>Total Escrow Deposit:</span>
-            <span className="text-[#6c4dd1]">{financials.totalRequiredSOL} SOL</span>
+          <div className="flex justify-between text-[#141414] font-semibold pt-2.5 border-t border-[#e7e2d8] text-[13.5px]">
+            <span>Total Escrow Inscription:</span>
+            <span className="text-[#9e7b4f]">{financials.totalRequiredSOL} SOL</span>
           </div>
         </div>
 
         <button
           onClick={handleCreateAndFund}
           disabled={isSubmitting || !title.trim()}
-          className="vault-btn-primary w-full h-11 text-[14px] disabled:opacity-40"
+          className="vault-btn-primary w-full h-12 text-[14px] disabled:opacity-40"
         >
-          {isSubmitting ? "Depositing SOL to Escrow PDA..." : "Confirm & Deposit Escrow on Solana"}
+          {isSubmitting ? "Inscribing PDA on Solana Cluster..." : "Confirm & Inscribe Escrow Vault"}
         </button>
       </div>
     </div>

@@ -1,111 +1,124 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fafafb;
-  --foreground: #18181b;
-  --muted: #71717a;
-  --muted-foreground: #71717a;
-  --edge: #e4e4e7;
+  --background: #faf8f5;
+  --foreground: #141414;
+  --muted: #736f68;
+  --muted-foreground: #736f68;
+  --edge: #e7e2d8;
+  --edge-subtle: #f0ece4;
   --snow: #ffffff;
-  --cement: #f4f4f6;
-  --graphite: #f0f0f2;
-  --charcoal: #e9e9ed;
-  --primary: #6c4dd1;
+  --stone-warm: #f4f0e8;
+  --stone-sand: #ede7dc;
+  --charcoal: #1f1f1f;
+  --luxury-gold: #9e7b4f;
+  --luxury-gold-light: #f6efe4;
+  --luxury-forest: #223127;
+  --primary: #141414;
   --primary-foreground: #ffffff;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  letter-spacing: -0.012em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Garamond", "Georgia", serif;
+  letter-spacing: -0.015em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Vault Tactile Buttons */
+/* Luxury Editorial Buttons */
 .vault-btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
-  background: linear-gradient(180deg, #2b2b2b 0%, #242426 100%);
-  border: 1px solid #38383c;
-  border-bottom: none;
-  color: #f7f7f8;
+  border-radius: 6px;
+  background: #141414;
+  border: 1px solid #141414;
+  color: #f7f6f2;
   font-weight: 500;
-  box-shadow: 0 3.5px 0 0 #151516, 0 8px 16px -6px rgba(24, 24, 27, 0.35);
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.02em;
+  padding: 0 1.25rem;
+  box-shadow: 0 2px 8px -2px rgba(20, 20, 20, 0.2);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
 
 .vault-btn-primary:hover {
-  background: #343438;
+  background: #262626;
+  border-color: #262626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px -3px rgba(20, 20, 20, 0.25);
 }
 
 .vault-btn-primary:active {
-  transform: translateY(2px);
-  box-shadow: 0 1px 0 0 #151516, 0 3px 6px -4px rgba(24, 24, 27, 0.35);
+  transform: translateY(1px);
+  box-shadow: 0 1px 4px rgba(20, 20, 20, 0.2);
 }
 
 .vault-btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: 6px;
   background: #ffffff;
-  border: 1px solid #e4e4e7;
-  border-bottom: none;
-  color: #18181b;
+  border: 1px solid #dfd9ce;
+  color: #141414;
   font-weight: 500;
-  box-shadow: 0 3.5px 0 0 #d4d4d8, 0 6px 12px -3px rgba(24, 24, 27, 0.08);
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.02em;
+  padding: 0 1.25rem;
+  box-shadow: 0 1px 3px rgba(20, 20, 20, 0.04);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
 
 .vault-btn-secondary:hover {
-  background: #f7f7f8;
+  background: #f7f5f0;
+  border-color: #cec6b7;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(20, 20, 20, 0.06);
 }
 
 .vault-btn-secondary:active {
-  transform: translateY(2px);
-  box-shadow: 0 1px 0 0 #d4d4d8, 0 2px 4px -2px rgba(24, 24, 27, 0.1);
+  transform: translateY(1px);
 }
 
-/* Vault Card */
+/* Luxury Editorial Cards */
 .vault-card {
-  border-radius: 12px;
-  border: 1px solid #e4e4e7;
+  border-radius: 8px;
+  border: 1px solid #e7e2d8;
   background: #ffffff;
-  box-shadow: 0 8px 24px -12px rgba(24, 24, 27, 0.06);
+  box-shadow: 0 4px 20px -8px rgba(20, 20, 20, 0.04);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .vault-card-subtle {
-  border-radius: 12px;
-  border: 1px solid #eaeaea;
-  background: #f8f8fa;
+  border-radius: 8px;
+  border: 1px solid #eae5db;
+  background: #f5f2eb;
 }
 
-/* Glowing border ring */
-.spin-ring {
-  background: linear-gradient(135deg, rgba(108, 77, 209, 0.3), rgba(228, 228, 231, 0.8));
+.vault-hairline {
+  border-color: #e7e2d8;
 }
 
-/* Solana wallet adapter custom theme overrides */
+/* Solana wallet adapter custom luxury override */
 .wallet-adapter-button {
-  height: 36px !important;
-  font-size: 13px !important;
+  height: 38px !important;
+  font-size: 12.5px !important;
   font-weight: 500 !important;
-  border-radius: 10px !important;
-  background-color: #18181b !important;
-  color: #ffffff !important;
+  letter-spacing: 0.03em !important;
+  border-radius: 6px !important;
+  background-color: #141414 !important;
+  color: #faf8f5 !important;
   padding: 0 14px !important;
-  box-shadow: 0 3px 0 0 #09090b !important;
   font-family: inherit !important;
-  transition: all 0.15s ease !important;
+  border: 1px solid #141414 !important;
+  box-shadow: 0 2px 6px rgba(20, 20, 20, 0.15) !important;
+  transition: all 0.2s ease !important;
 }
 
-.wallet-adapter-button:active {
-  transform: translateY(2px) !important;
-  box-shadow: 0 1px 0 0 #09090b !important;
+.wallet-adapter-button:hover {
+  background-color: #262626 !important;
+  border-color: #262626 !important;
 }

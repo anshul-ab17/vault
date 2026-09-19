@@ -21,41 +21,43 @@ export function Navbar() {
   }, [publicKey]);
 
   const navLinks = [
-    { href: "/tasks", label: "Tasks" },
-    { href: "/dashboard", label: "Sponsor Board" },
-    { href: "/contributor", label: "Contributor" },
-    { href: "/pricing", label: "Pricing" },
+    { href: "/tasks", label: "Bounties" },
+    { href: "/dashboard", label: "Sponsor Suite" },
+    { href: "/contributor", label: "Artisan Workstation" },
+    { href: "/pricing", label: "Tiers" },
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-[#e4e4e7]/80 bg-[#fafafb]/85 backdrop-blur-md transition-all duration-200">
-      <div className="mx-auto w-full max-w-[1364px] px-5 sm:px-8 h-full flex items-center justify-between">
-        <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-2.5 text-[#18181b] group">
-            <div className="size-6 rounded-[7px] bg-[#18181b] flex items-center justify-center text-white shadow-[0_2px_6px_rgba(24,24,27,0.25)]">
-              <svg className="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+    <header className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-[#e7e2d8] bg-[#faf8f5]/90 backdrop-blur-md transition-all duration-200">
+      <div className="mx-auto w-full max-w-[1364px] px-6 sm:px-10 h-full flex items-center justify-between">
+        <div className="flex items-center gap-10">
+          <Link href="/" className="flex items-center gap-3 text-[#141414] group">
+            <div className="size-6 rounded-[4px] bg-[#141414] flex items-center justify-center text-[#faf8f5] shadow-xs">
+              <svg className="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
               </svg>
             </div>
-            <span className="font-semibold text-[15px] tracking-tight text-[#18181b]">
-              vault
-            </span>
-            <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-[#f4f4f6] text-[#71717a] border border-[#e4e4e7]">
-              devnet
-            </span>
+            <div className="flex items-baseline gap-2">
+              <span className="font-semibold text-[15px] tracking-tight text-[#141414] uppercase">
+                VAULT
+              </span>
+              <span className="text-[10px] font-mono tracking-widest uppercase text-[#9e7b4f]">
+                Solana Protocol
+              </span>
+            </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-6 text-[13px]">
+          <nav className="hidden md:flex items-center gap-8 text-[13px] tracking-wide">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`transition-colors duration-150 font-normal ${
+                  className={`transition-colors duration-200 ${
                     isActive
-                      ? "text-[#18181b] font-medium"
-                      : "text-[#71717a] hover:text-[#18181b]"
+                      ? "text-[#141414] font-medium border-b border-[#141414] pb-0.5"
+                      : "text-[#736f68] hover:text-[#141414]"
                   }`}
                 >
                   {link.label}
@@ -65,13 +67,13 @@ export function Navbar() {
           </nav>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <Link
             href="/dashboard/tasks/new"
-            className="vault-btn-secondary h-8 px-3.5 text-[12px] font-medium hidden sm:inline-flex items-center gap-1.5"
+            className="vault-btn-secondary h-9 px-4 text-[12.5px] font-medium hidden sm:inline-flex items-center gap-1.5"
           >
-            <Plus className="size-3.5 text-[#6c4dd1]" />
-            <span>Fund Task</span>
+            <Plus className="size-3.5 text-[#9e7b4f]" />
+            <span>Fund Bounty</span>
           </Link>
 
           <div className="origin-right scale-95">
