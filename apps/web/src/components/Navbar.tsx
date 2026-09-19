@@ -23,8 +23,8 @@ export function Navbar() {
     <header className="fixed top-0 left-0 right-0 z-40 h-16 border-b border-[#e7e2d8] bg-[#faf8f5]/95 backdrop-blur-md transition-all duration-200">
       <div className="mx-auto w-full max-w-[1364px] px-6 sm:px-10 h-full flex items-center justify-between">
         <div className="flex items-center gap-10">
-          <Link href="/" className="flex items-center gap-3 text-[#141414] group">
-            <div className="relative size-7 rounded-[6px] overflow-hidden flex items-center justify-center">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative size-8 rounded-[8px] overflow-hidden flex items-center justify-center p-1 bg-white border border-[#e7e2d8] shadow-xs transition-transform duration-200 group-hover:scale-105">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/vault.png"
@@ -33,11 +33,8 @@ export function Navbar() {
               />
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="font-serif font-medium text-[15px] tracking-[0.15em] text-[#141414] uppercase">
-                V.A.U.L.T.
-              </span>
-              <span className="text-[10px] font-mono tracking-widest uppercase text-[#9e7b4f]">
-                Hybrid Protocol
+              <span className="text-[11px] font-mono tracking-widest uppercase text-[#9e7b4f] font-semibold">
+                Protocol
               </span>
             </div>
           </Link>

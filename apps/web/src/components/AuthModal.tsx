@@ -44,14 +44,14 @@ export function AuthModal() {
 
         {/* Modal Header */}
         <div className="space-y-1 text-center">
-          <div className="mx-auto size-10 rounded-lg bg-white border border-[#e7e2d8] p-2 flex items-center justify-center mb-3 shadow-xs">
+          <div className="mx-auto size-12 rounded-xl bg-white border border-[#e7e2d8] p-2 flex items-center justify-center mb-3 shadow-sm">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/vault.png" alt="V.A.U.L.T." className="size-full object-contain" />
+            <img src="/vault.png" alt="Logo" className="size-full object-contain" />
           </div>
-          <span className="text-[10px] font-mono uppercase tracking-widest text-[#9e7b4f]">
+          <span className="text-[10px] font-mono uppercase tracking-widest text-[#9e7b4f] font-semibold">
             AUTHENTICATION GATEWAY
           </span>
-          <h3 className="text-xl font-serif text-[#141414]">Access V.A.U.L.T.</h3>
+          <h3 className="text-xl font-medium text-[#141414]">Welcome to Protocol</h3>
           <p className="text-[13px] text-[#736f68]">
             Sign in via Web2 Email or connect your Web3 Solana wallet.
           </p>

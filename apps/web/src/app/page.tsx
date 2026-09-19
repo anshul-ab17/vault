@@ -43,12 +43,11 @@ export default function HomePage() {
             {/* Top Announcement Pill */}
             <Link
               href="/tasks"
-              className="group mb-8 inline-flex items-center gap-2.5 rounded-full bg-[#111111] py-1.5 pl-1.5 pr-4 text-[13px] leading-none text-white shadow-md transition-colors duration-200 hover:bg-[#2a2a2a]"
+              className="group mb-8 inline-flex items-center gap-2.5 rounded-full bg-[#111111] py-1.5 pl-2 pr-4 text-[13px] leading-none text-white shadow-md transition-colors duration-200 hover:bg-[#2a2a2a]"
             >
-              <span className="rounded-full bg-[#3b82f6] px-2.5 py-[5px] text-[10.5px] uppercase font-mono tracking-wider text-white font-semibold">
-                V1.0
-              </span>
-              <span className="font-medium">V.A.U.L.T. Hybrid Settlement is Live</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/vault.png" alt="Logo" className="size-4 object-contain rounded-full bg-white p-0.5" />
+              <span className="font-medium">Hybrid Settlement is Live</span>
               <span className="hidden text-white/60 transition-colors duration-200 group-hover:text-white sm:inline">
                 Explore Bounties
               </span>
@@ -191,7 +190,7 @@ export default function HomePage() {
             </h2>
           </div>
           <p className="text-[15px] text-zinc-600 max-w-md">
-            Whether you build on Solana Devnet or require corporate USD fiat ledgers, V.A.U.L.T. guarantees deterministic settlement.
+            Whether you build on Solana Devnet or require corporate USD fiat ledgers, our protocol guarantees deterministic settlement.
           </p>
         </div>
 
@@ -380,9 +379,10 @@ export default function HomePage() {
 
       {/* Cap-style Bottom CTA Banner */}
       <div className="max-w-[1280px] mx-auto rounded-[24px] bg-[#111111] p-10 sm:p-14 text-center text-white space-y-6 shadow-2xl">
-        <span className="text-[11px] font-mono tracking-widest uppercase text-[#3b82f6] font-semibold">
-          START WITH V.A.U.L.T.
-        </span>
+        <div className="mx-auto size-12 rounded-xl bg-white p-2 flex items-center justify-center mb-2 shadow-sm">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/vault.png" alt="Logo" className="size-full object-contain" />
+        </div>
         <h2 className="text-[2.25rem] sm:text-[3.25rem] font-normal tracking-tight leading-tight max-w-2xl mx-auto">
           Deterministic software delivery for modern engineering teams.
         </h2>
