@@ -7,10 +7,26 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { Plus, Mail, LogOut, User, Sparkles } from "lucide-react";
 import { useHybridAuth } from "@/context/HybridAuthContext";
+import { useEffect, useState } from "react";
 
 export function Navbar() {
   const pathname = usePathname();
   const { user, isLoggedIn, logout, setOpenAuthModal } = useHybridAuth();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 15) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const navLinks = [
     { href: "/tasks", label: "Bounties" },
@@ -20,35 +36,36 @@ export function Navbar() {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 h-16 border-b border-[#e7e2d8] bg-[#faf8f5]/95 backdrop-blur-md transition-all duration-200">
+    <header
+      className={`fixed top-0 left-0 right-0 z-40 h-16 transition-all duration-300 ${
+        isScrolled
+          ? "border-b border-[#e7e2d8] bg-[#faf8f5]/90 backdrop-blur-md shadow-xs"
+          : "border-b border-transparent bg-transparent"
+      }`}
+    >
       <div className="mx-auto w-full max-w-[1364px] px-6 sm:px-10 h-full flex items-center justify-between">
         <div className="flex items-center gap-10">
-          <Link href="/" className="flex items-center gap-3 group">
+          <Link href="/" className="flex items-center group">
             <div className="relative size-8 rounded-[8px] overflow-hidden flex items-center justify-center p-1 bg-white border border-[#e7e2d8] shadow-xs transition-transform duration-200 group-hover:scale-105">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/vault.png"
-                alt="Vault Logo"
+                alt="Logo"
                 className="size-full object-contain"
               />
             </div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-[11px] font-mono tracking-widest uppercase text-[#9e7b4f] font-semibold">
-                Protocol
-              </span>
-            </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-8 text-[13px] tracking-wide">
+          <nav className="hidden md:flex items-center gap-8 text-[13.5px] tracking-wide">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`transition-colors duration-200 ${
+                  className={`transition-colors duration-200 font-medium ${
                     isActive
-                      ? "text-[#141414] font-medium border-b border-[#141414] pb-0.5"
+                      ? "text-[#141414]"
                       : "text-[#736f68] hover:text-[#141414]"
                   }`}
                 >
