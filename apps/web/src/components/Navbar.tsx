@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
@@ -32,10 +33,13 @@ export function Navbar() {
       <div className="mx-auto w-full max-w-[1364px] px-6 sm:px-10 h-full flex items-center justify-between">
         <div className="flex items-center gap-10">
           <Link href="/" className="flex items-center gap-3 text-[#141414] group">
-            <div className="size-6 rounded-[4px] bg-[#141414] flex items-center justify-center text-[#faf8f5] shadow-xs">
-              <svg className="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-              </svg>
+            <div className="relative size-7 rounded-[6px] overflow-hidden flex items-center justify-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/vault.png"
+                alt="Vault Logo"
+                className="size-full object-contain"
+              />
             </div>
             <div className="flex items-baseline gap-2">
               <span className="font-semibold text-[15px] tracking-tight text-[#141414] uppercase">

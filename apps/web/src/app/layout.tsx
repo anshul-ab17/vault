@@ -6,6 +6,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "VAULT — Programmable Solana Escrow Protocol",
   description: "Non-custodial milestone escrow for software engineering deliverables and bounties on Solana Devnet.",
+  icons: {
+    icon: "/vault.png",
+  },
 };
 
 export default function RootLayout({
@@ -24,10 +27,13 @@ export default function RootLayout({
           <footer className="border-t border-[#e7e2d8] py-10 text-center text-[12.5px] text-[#736f68] bg-[#faf8f5]">
             <div className="max-w-[1364px] mx-auto px-6 sm:px-10 flex flex-col sm:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-3">
-                <div className="size-5 rounded-[4px] bg-[#141414] flex items-center justify-center text-[#faf8f5]">
-                  <svg className="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                  </svg>
+                <div className="relative size-6 rounded-[4px] overflow-hidden flex items-center justify-center">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/vault.png"
+                    alt="Vault Logo"
+                    className="size-full object-contain"
+                  />
                 </div>
                 <span className="font-semibold uppercase tracking-wider text-[#141414] text-[13px]">VAULT</span>
                 <span className="text-[#a6a096]">— Non-Custodial Solana Escrow Architecture</span>
