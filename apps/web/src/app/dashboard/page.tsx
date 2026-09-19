@@ -153,42 +153,65 @@ export default function SponsorDashboard() {
   };
 
   return (
-    <div className="max-w-[1364px] mx-auto px-6 sm:px-10 py-12 space-y-10">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-8 border-b border-[#e7e2d8]">
+    <div className="max-w-[1364px] mx-auto px-6 sm:px-10 py-10 space-y-10">
+      {/* Header (Inspired by Image 1, Page 3 & Image 3, Page 4) */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-6 border-b border-zinc-200">
         <div>
-          <span className="text-[11px] font-mono uppercase tracking-widest text-[#9e7b4f]">
-            MANAGEMENT SUITE
+          <span className="text-[11px] font-mono uppercase tracking-widest text-blue-600 font-semibold">
+            SPONSOR SUITE
           </span>
-          <h1 className="text-[32px] sm:text-[40px] font-serif font-light text-[#141414] tracking-tight mt-1">
-            Sponsor Escrow Portfolio
+          <h1 className="text-[32px] sm:text-[40px] font-normal text-zinc-900 tracking-tight mt-1">
+            Powering builders with real capital.
           </h1>
-          <p className="text-[14.5px] text-[#736f68] mt-1">
-            Active Tier: <span className="text-[#141414] font-medium">{plan}</span> ({PRICING_PLANS[plan].completionFeePercent}% protocol settlement rate • Web2 & Web3 Enabled)
+          <p className="text-[15px] text-zinc-500 mt-1">
+            Fund bounties, support talent, and drive innovation with transparent, programmable escrow.
           </p>
         </div>
 
         <Link
           href="/dashboard/tasks/new"
-          className="vault-btn-primary h-10 px-5 text-[13px] self-start sm:self-auto gap-2"
+          className="cap-btn-primary h-10 px-5 text-[13.5px] flex items-center gap-2"
         >
-          <Plus className="size-3.5 text-[#9e7b4f]" />
-          <span>Inscribe New Bounty</span>
+          <Plus className="size-4" />
+          <span>Fund New Bounty</span>
         </Link>
       </div>
 
+      {/* 4 Trust Metrics Bar */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-xs space-y-1">
+          <div className="text-[26px] font-mono font-semibold text-zinc-900">100%</div>
+          <div className="text-[12.5px] text-zinc-500 font-medium">On-chain Security</div>
+        </div>
+
+        <div className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-xs space-y-1">
+          <div className="text-[26px] font-mono font-semibold text-zinc-900">&lt; 5 min</div>
+          <div className="text-[12.5px] text-zinc-500 font-medium">Escrow Creation</div>
+        </div>
+
+        <div className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-xs space-y-1">
+          <div className="text-[26px] font-mono font-semibold text-zinc-900">0</div>
+          <div className="text-[12.5px] text-zinc-500 font-medium">Manual Payouts</div>
+        </div>
+
+        <div className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-xs space-y-1">
+          <div className="text-[26px] font-mono font-semibold text-emerald-600">ACID + PDA</div>
+          <div className="text-[12.5px] text-zinc-500 font-medium">Dual Settlement Rail</div>
+        </div>
+      </div>
+
       {actionMessage && (
-        <div className="p-4 bg-[#f4f0e8] border border-[#e7e2d8] text-[#141414] text-[13.5px] rounded-[6px] font-mono flex items-center gap-2.5">
-          <CheckCircle2 className="size-4 text-emerald-700 shrink-0" />
+        <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-900 text-[13.5px] rounded-xl font-mono flex items-center gap-2.5">
+          <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
           <span>{actionMessage}</span>
         </div>
       )}
 
       {/* 2-Column Luxury Workspace */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Tasks */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="flex items-center justify-between px-1 text-[11px] font-mono uppercase tracking-wider text-[#736f68]">
+          <div className="flex items-center justify-between px-1 text-[11px] font-mono uppercase tracking-wider text-zinc-400 font-semibold">
             <span>Active Bounties ({tasks.length})</span>
             <span>Committed Value</span>
           </div>
@@ -200,39 +223,49 @@ export default function SponsorDashboard() {
                 <div
                   key={task.id}
                   onClick={() => setSelectedTask(task)}
-                  className={`p-5 rounded-lg border cursor-pointer transition-all ${
+                  className={`p-5 rounded-2xl border cursor-pointer transition-all ${
                     isSelected
-                      ? "bg-white border-[#141414] shadow-md ring-1 ring-[#141414]/10"
-                      : "bg-[#ffffff] border-[#e7e2d8] hover:border-[#cec6b7]"
+                      ? "bg-white border-zinc-900 shadow-md ring-1 ring-zinc-900/10"
+                      : "bg-white border-zinc-200 hover:border-zinc-300"
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-[#f4f0e8] text-[#141414]">
+                      <span className={`text-[11px] font-mono px-2.5 py-0.5 rounded-full border font-medium ${
+                        task.status === "Funded"
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                          : task.status === "InProgress"
+                          ? "bg-blue-50 text-blue-700 border-blue-200"
+                          : task.status === "Submitted"
+                          ? "bg-amber-50 text-amber-700 border-amber-200"
+                          : "bg-zinc-100 text-zinc-700 border-zinc-200"
+                      }`}>
                         {task.status}
                       </span>
                       {task.paymentRail === "Web2_Fiat" ? (
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-900 border border-amber-500/20">
+                        <span className="text-[10.5px] font-mono px-2 py-0.5 rounded-md bg-amber-50 text-amber-900 border border-amber-200">
                           ACID Fiat
                         </span>
                       ) : (
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/10 text-purple-900 border border-purple-500/20">
+                        <span className="text-[10.5px] font-mono px-2 py-0.5 rounded-md bg-purple-50 text-purple-900 border border-purple-200">
                           Solana PDA
                         </span>
                       )}
                     </div>
-                    <span className="text-[15px] font-semibold text-[#141414] font-mono">
+                    <span className="text-[15.5px] font-semibold text-zinc-900 font-mono">
                       {task.paymentRail === "Web2_Fiat"
                         ? `${task.rewardAmountFiat} ${task.fiatCurrency || "USD"}`
                         : `${task.rewardAmountSOL} SOL`}
                     </span>
                   </div>
-                  <h3 className="text-[15px] font-medium text-[#141414] mt-2.5 line-clamp-1">
+
+                  <h3 className="text-[15px] font-medium text-zinc-900 mt-2.5 line-clamp-1">
                     {task.title}
                   </h3>
-                  <div className="flex items-center justify-between text-[11.5px] text-[#736f68] mt-2 font-mono">
+
+                  <div className="flex items-center justify-between text-[12px] text-zinc-500 mt-2.5 font-mono">
                     <span>Due {task.deadline}</span>
-                    <span>{task.submissions.length} deliverables</span>
+                    <span className="text-zinc-400">{task.submissions.length} deliverables</span>
                   </div>
                 </div>
               );
@@ -243,11 +276,12 @@ export default function SponsorDashboard() {
         {/* Right Column: Inspector */}
         <div className="lg:col-span-7">
           {selectedTask ? (
-            <div className="vault-card p-7 sm:p-8 space-y-8 bg-white">
-              <div className="flex items-start justify-between pb-6 border-b border-[#e7e2d8]">
+            <div className="cap-card p-7 sm:p-8 space-y-8 bg-white">
+              <div className="flex items-start justify-between pb-6 border-b border-zinc-100">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[11px] font-mono text-[#9e7b4f]">{selectedTask.id}</span>
+                    <span className="text-[11px] font-mono text-zinc-400">{selectedTask.id}</span>
+
                     <span className="text-[10px] font-mono px-2 py-0.2 rounded-full border border-[#e7e2d8] bg-[#f5f2eb] text-[#736f68]">
                       {selectedTask.paymentRail === "Web2_Fiat" ? "Fiat ACID Ledger" : "Solana Devnet Smart Contract"}
                     </span>
