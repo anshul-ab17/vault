@@ -38,28 +38,45 @@ export default function HomePage() {
 
   return (
     <div className="w-full space-y-24 pb-24">
-      {/* Full-width Sky Hero Section (covers whole page 1 below navbar) */}
-      <section className="relative w-full border-b border-zinc-200/80 bg-gradient-to-b from-[#d9e7f8]/70 via-[#e6edf6]/50 to-[#f8fafc] px-6 pt-12 pb-20 sm:pt-16 sm:pb-24 text-center overflow-hidden">
-        <div className="relative mx-auto flex max-w-[1080px] flex-col items-center">
+      {/* Full-width Sky Hero Section with Reference Design Pattern Shape */}
+      <section className="relative w-full border-b border-zinc-200/80 bg-gradient-to-b from-[#d9e7f8]/70 via-[#e6edf6]/50 to-[#f8fafc] px-6 pt-10 pb-20 sm:pt-14 sm:pb-24 overflow-hidden">
+        
+        {/* Right-side Sweeping Wave Design Pattern Shape (from ui/image.png) */}
+        <div className="pointer-events-none select-none absolute top-4 right-0 sm:right-4 lg:right-12 xl:right-20 w-[260px] sm:w-[380px] lg:w-[480px] xl:w-[560px] h-[340px] sm:h-[480px] lg:h-[580px] z-0 opacity-85 sm:opacity-95 transition-opacity">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/hero-design-pattern.png"
+            alt="Hero Design Pattern"
+            className="w-full h-full object-contain object-top-right filter drop-shadow-[0_12px_24px_rgba(59,130,246,0.06)]"
+          />
+          {/* Subtle Vertical Brand Monogram from Reference */}
+          <div className="absolute bottom-6 right-8 hidden md:flex flex-col text-right font-mono text-[10px] uppercase tracking-[0.25em] text-zinc-400/80 leading-relaxed">
+            <span>BUILD</span>
+            <span>TOGETHER</span>
+            <span>FURTHER</span>
+          </div>
+        </div>
+
+        <div className="relative z-10 mx-auto flex max-w-[1140px] flex-col items-start lg:items-start text-left">
           
           {/* Top Cluster & Status Pill */}
-          <div className="mb-6 inline-flex flex-wrap items-center justify-center gap-2 rounded-full border border-blue-200/80 bg-white/90 px-4 py-1.5 text-[12px] font-mono text-zinc-700 shadow-xs backdrop-blur-xs">
+          <div className="mb-6 inline-flex flex-wrap items-center gap-2 rounded-full border border-blue-200/80 bg-white/95 px-4 py-1.5 text-[12px] font-mono text-zinc-700 shadow-xs backdrop-blur-xs">
             <span className="size-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="font-semibold text-zinc-900">SOLANA NON-CUSTODIAL PROTOCOL</span>
+            <span className="font-semibold text-zinc-900">FOR BUILDERS. BY BUILDERS.</span>
             <span className="text-zinc-300">/</span>
-            <span className="text-blue-600 font-medium">DEVNET CLUSTER</span>
+            <span className="text-blue-600 font-medium">SOLANA DEVNET</span>
             <span className="text-zinc-300">/</span>
-            <span className="text-zinc-500">ACID FIAT ENGINE</span>
+            <span className="text-zinc-500">ACID FIAT</span>
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-[clamp(40px,5.8vw,78px)] font-normal leading-[1.04] tracking-[-0.035em] text-[#111111] max-w-[900px]">
+          <h1 className="text-[clamp(38px,5.5vw,76px)] font-normal leading-[1.04] tracking-[-0.035em] text-[#111111] max-w-[780px]">
             Humanist precision. <br />
             <span className="text-zinc-500 font-light">Deterministic escrow.</span>
           </h1>
 
           {/* Subtitle */}
-          <p className="font-normal tracking-[-0.01em] mt-6 max-w-[700px] text-[17px] sm:text-[19px] leading-[1.55] text-zinc-600">
+          <p className="font-normal tracking-[-0.01em] mt-5 max-w-[620px] text-[16.5px] sm:text-[18.5px] leading-[1.55] text-zinc-600">
             A refined milestone architecture for engineering teams and artisans. Lock bounty capital inside program-derived accounts on Solana and release funds upon automated verification.
           </p>
 
@@ -69,7 +86,7 @@ export default function HomePage() {
               href="/dashboard/tasks/new"
               className="cap-btn-primary w-full sm:w-auto px-7 text-[14.5px] flex items-center justify-center gap-2 shadow-lg"
             >
-              <span>Initiate Escrow PDA</span>
+              <span>Fund Bounty</span>
               <ArrowRight className="size-4" />
             </Link>
 
@@ -77,13 +94,14 @@ export default function HomePage() {
               href="/tasks"
               className="cap-btn-secondary w-full sm:w-auto px-6 text-[14.5px] flex items-center justify-center gap-2"
             >
-              <span>Explore Curated Bounties</span>
+              <span>Explore Bounties</span>
               <ArrowUpRight className="size-4 text-zinc-500" />
             </Link>
           </div>
 
           {/* 4 Architectural Invariant Cards (Inspired by Reference Image 1 & 3) */}
           <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full text-left">
+
             {/* Card 1 */}
             <div className="p-5 rounded-2xl bg-white/90 border border-zinc-200/90 shadow-xs hover:shadow-md transition-all space-y-3 group backdrop-blur-xs">
               <div className="flex items-center justify-between">
