@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { useHybridAuth } from "@/context/HybridAuthContext";
 import { EscrowTask, TaskDeliverable } from "@vault/shared";
 import { getTasks, saveTasks } from "@/lib/store";
-import { ExternalLink, Send, CheckCircle2, Check, ArrowRight } from "lucide-react";
+import { ExternalLink, Send, CheckCircle2, Check, ArrowRight, CreditCard, Coins } from "lucide-react";
 
 export default function ContributorPage() {
   const { publicKey } = useWallet();
+  const { user } = useHybridAuth();
   const [tasks, setTasks] = useState<EscrowTask[]>([]);
   const [selectedTask, setSelectedTask] = useState<EscrowTask | null>(null);
 
@@ -25,10 +27,12 @@ export default function ContributorPage() {
   }, []);
 
   const handleAcceptTask = (task: EscrowTask) => {
-    const contributorWallet = publicKey ? publicKey.toBase58() : "Contributor...demo";
+    const contributorId = user?.email || user?.walletAddress || publicKey?.toBase58() || "artisan_demo";
+    const actorType = user?.authMethod || (publicKey ? "Solana_Wallet" : "Email_MagicLink");
+
     const updated: EscrowTask = {
       ...task,
-      contributorWallet,
+      contributorId,
       status: "InProgress",
       updatedAt: new Date().toISOString(),
       auditLogs: [
@@ -36,7 +40,8 @@ export default function ContributorPage() {
         {
           id: `evt-${Date.now()}`,
           taskId: task.id,
-          actorWallet: contributorWallet,
+          actorId: contributorId,
+          actorType,
           eventType: "TASK_ACCEPTED",
           previousState: task.status,
           newState: "InProgress",
@@ -55,13 +60,14 @@ export default function ContributorPage() {
 
   const handleSubmitWork = (task: EscrowTask) => {
     if (!subTitle.trim() || !evidenceUrl.trim()) return;
-    const contributorWallet = publicKey ? publicKey.toBase58() : "Contributor...demo";
+    const contributorId = user?.email || user?.walletAddress || publicKey?.toBase58() || "artisan_demo";
+    const actorType = user?.authMethod || (publicKey ? "Solana_Wallet" : "Email_MagicLink");
     const nextRev = (task.submissions?.length || 0) + 1;
 
     const newDeliverable: TaskDeliverable = {
       id: `sub-${Date.now()}`,
       taskId: task.id,
-      contributorWallet,
+      contributorId,
       title: subTitle,
       description: subDesc,
       evidenceUrl,
@@ -80,7 +86,8 @@ export default function ContributorPage() {
         {
           id: `evt-${Date.now()}`,
           taskId: task.id,
-          actorWallet: contributorWallet,
+          actorId: contributorId,
+          actorType,
           eventType: "SUBMISSION_CREATED",
           previousState: task.status,
           newState: "Submitted",
@@ -107,11 +114,11 @@ export default function ContributorPage() {
         <span className="text-[11px] font-mono uppercase tracking-widest text-[#9e7b4f]">
           ARTISAN WORKSTATION
         </span>
-        <h1 className="text-[32px] sm:text-[40px] font-[400] text-[#141414] tracking-tight mt-1">
+        <h1 className="text-[32px] sm:text-[40px] font-serif font-light text-[#141414] tracking-tight mt-1">
           Deliverable Inscription Studio
         </h1>
         <p className="text-[15px] text-[#736f68] mt-1">
-          Claim escrow bounties, attach pull request proofs, and claim atomic on-chain rewards.
+          Claim escrow bounties, attach pull request proofs, and receive atomic payments in USD/INR or SOL.
         </p>
       </div>
 
@@ -144,11 +151,24 @@ export default function ContributorPage() {
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-[#f4f0e8] text-[#141414]">
-                      {task.status}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-[#f4f0e8] text-[#141414]">
+                        {task.status}
+                      </span>
+                      {task.paymentRail === "Web2_Fiat" ? (
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-900 border border-amber-500/20">
+                          ACID Fiat
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/10 text-purple-900 border border-purple-500/20">
+                          Solana PDA
+                        </span>
+                      )}
+                    </div>
                     <span className="text-[15px] font-semibold text-[#141414] font-mono">
-                      {task.rewardAmountSOL} SOL
+                      {task.paymentRail === "Web2_Fiat"
+                        ? `${task.rewardAmountFiat} ${task.fiatCurrency || "USD"}`
+                        : `${task.rewardAmountSOL} SOL`}
                     </span>
                   </div>
                   <h3 className="text-[15px] font-medium text-[#141414] mt-2.5 line-clamp-1">
@@ -170,15 +190,22 @@ export default function ContributorPage() {
             <div className="vault-card p-7 sm:p-8 space-y-8 bg-white">
               <div className="flex items-start justify-between pb-6 border-b border-[#e7e2d8]">
                 <div>
-                  <span className="text-[11px] font-mono text-[#9e7b4f]">{selectedTask.id}</span>
-                  <h2 className="text-[22px] font-medium text-[#141414] mt-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[11px] font-mono text-[#9e7b4f]">{selectedTask.id}</span>
+                    <span className="text-[10px] font-mono px-2 py-0.2 rounded-full border border-[#e7e2d8] bg-[#f5f2eb] text-[#736f68]">
+                      {selectedTask.paymentRail === "Web2_Fiat" ? "Fiat ACID Ledger" : "Solana Devnet Smart Contract"}
+                    </span>
+                  </div>
+                  <h2 className="text-[22px] font-serif font-medium text-[#141414]">
                     {selectedTask.title}
                   </h2>
                 </div>
                 <div className="text-right">
                   <span className="text-[11px] text-[#736f68] block font-mono uppercase tracking-wider">Artisan Reward</span>
                   <span className="text-[24px] font-semibold text-emerald-800 font-mono">
-                    {selectedTask.rewardAmountSOL} SOL
+                    {selectedTask.paymentRail === "Web2_Fiat"
+                      ? `${selectedTask.rewardAmountFiat} ${selectedTask.fiatCurrency || "USD"}`
+                      : `${selectedTask.rewardAmountSOL} SOL`}
                   </span>
                 </div>
               </div>
@@ -212,7 +239,13 @@ export default function ContributorPage() {
               {selectedTask.status === "Funded" && (
                 <div className="p-6 rounded-lg bg-[#f5f2eb] border border-[#e7e2d8] space-y-3">
                   <p className="text-[14px] text-[#141414]">
-                    This covenant is pre-funded with <strong>{selectedTask.rewardAmountSOL} SOL</strong> locked in a verified Solana Escrow PDA.
+                    This covenant is pre-funded with{" "}
+                    <strong>
+                      {selectedTask.paymentRail === "Web2_Fiat"
+                        ? `${selectedTask.rewardAmountFiat} ${selectedTask.fiatCurrency || "USD"}`
+                        : `${selectedTask.rewardAmountSOL} SOL`}
+                    </strong>{" "}
+                    locked in a {selectedTask.paymentRail === "Web2_Fiat" ? "verified ACID Fiat Escrow" : "verified Solana Escrow PDA"}.
                   </p>
                   <button
                     onClick={() => handleAcceptTask(selectedTask)}
@@ -264,7 +297,7 @@ export default function ContributorPage() {
 
               {selectedTask.status === "Paid" && (
                 <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-[13.5px] text-emerald-900 font-mono">
-                  ✓ Payout confirmed and released on Solana Devnet: {selectedTask.payoutTxSignature}
+                  ✓ Payout confirmed and released via {selectedTask.paymentRail === "Web2_Fiat" ? "ACID Fiat Rail" : "Solana Devnet"}: {selectedTask.payoutTxSignature}
                 </div>
               )}
             </div>

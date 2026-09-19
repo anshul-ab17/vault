@@ -1,8 +1,9 @@
-﻿import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { EscrowTask, TaskStatus, PRICING_PLANS, SubscriptionPlan } from "@vault/shared";
 
 export const DEVNET_RPC = "https://api.devnet.solana.com";
-export const VAULT_PROGRAM_ID = new PublicKey("VauLtEscrow1111111111111111111111111111111111");
+// Valid 32-byte base58 public keys for Solana Devnet
+export const VAULT_PROGRAM_ID = new PublicKey("11111111111111111111111111111111");
 export const PLATFORM_TREASURY_PUBKEY = new PublicKey("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin");
 
 export function deriveTaskPDA(taskId: string): [PublicKey, number] {

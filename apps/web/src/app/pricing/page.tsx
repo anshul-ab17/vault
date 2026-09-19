@@ -1,21 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { Check, ArrowRight, Sparkles } from "lucide-react";
+import { Check, ArrowRight, Sparkles, CreditCard, Coins } from "lucide-react";
 import { PRICING_PLANS, SubscriptionPlan } from "@vault/shared";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { getUserPlan, setUserPlan } from "@/lib/store";
+import { useHybridAuth } from "@/context/HybridAuthContext";
 
 export default function PricingPage() {
-  const { publicKey } = useWallet();
-  const currentPlan = publicKey ? getUserPlan(publicKey.toBase58()) : "Starter";
+  const { user, updatePlan } = useHybridAuth();
+  const currentPlan = user?.plan || "Starter";
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(currentPlan);
+  const [currencyMode, setCurrencyMode] = useState<"INR" | "USD" | "SOL">("USD");
   const [upgradedSuccess, setUpgradedSuccess] = useState(false);
 
   const handleUpgrade = (plan: SubscriptionPlan) => {
-    if (publicKey) {
-      setUserPlan(publicKey.toBase58(), plan);
-    }
+    updatePlan(plan);
     setSelectedPlan(plan);
     setUpgradedSuccess(true);
     setTimeout(() => setUpgradedSuccess(false), 4000);
@@ -24,20 +22,57 @@ export default function PricingPage() {
   const plans: SubscriptionPlan[] = ["Free", "Starter", "Business"];
 
   return (
-    <div className="max-w-[1140px] mx-auto px-6 sm:px-10 py-16 space-y-16">
+    <div className="max-w-[1180px] mx-auto px-6 sm:px-10 py-16 space-y-12">
       <div className="text-center space-y-4 max-w-2xl mx-auto">
         <span className="text-[11px] font-mono uppercase tracking-widest text-[#9e7b4f]">
-          PROTOCOL TIERS
+          PROTOCOL SUBSCRIPTION & ESCROW TIERS
         </span>
-        <h1 className="text-[36px] sm:text-[46px] font-[400] tracking-tight text-[#141414] leading-tight">
-          Transparent, deterministic tiers
+        <h1 className="text-[36px] sm:text-[46px] font-serif font-light tracking-tight text-[#141414] leading-tight">
+          Deterministic settlement rates
         </h1>
-        <p className="text-[16px] text-[#736f68] max-w-lg mx-auto leading-relaxed">
-          Scale your software delivery with reduced settlement fees and advanced multi-sig governance.
+        <p className="text-[15.5px] text-[#736f68] max-w-lg mx-auto leading-relaxed">
+          Unlock reduced protocol fees, custom multi-signature workflows, and enterprise ACID fiat or Solana escrow volumes.
         </p>
+
+        {/* Currency Switcher */}
+        <div className="flex items-center justify-center pt-2">
+          <div className="inline-flex rounded-lg p-1 bg-[#f0ede6] border border-[#e7e2d8] text-[12px] font-mono">
+            <button
+              onClick={() => setCurrencyMode("USD")}
+              className={`px-3 py-1 rounded-md transition-all ${
+                currencyMode === "USD"
+                  ? "bg-white text-[#141414] shadow-xs font-semibold"
+                  : "text-[#736f68] hover:text-[#141414]"
+              }`}
+            >
+              USD ($)
+            </button>
+            <button
+              onClick={() => setCurrencyMode("INR")}
+              className={`px-3 py-1 rounded-md transition-all ${
+                currencyMode === "INR"
+                  ? "bg-white text-[#141414] shadow-xs font-semibold"
+                  : "text-[#736f68] hover:text-[#141414]"
+              }`}
+            >
+              INR (₹)
+            </button>
+            <button
+              onClick={() => setCurrencyMode("SOL")}
+              className={`px-3 py-1 rounded-md transition-all ${
+                currencyMode === "SOL"
+                  ? "bg-white text-[#141414] shadow-xs font-semibold"
+                  : "text-[#736f68] hover:text-[#141414]"
+              }`}
+            >
+              SOL (◎)
+            </button>
+          </div>
+        </div>
+
         {upgradedSuccess && (
-          <div className="p-4 bg-[#f4f0e8] border border-[#e7e2d8] text-[#141414] text-[13.5px] rounded-[6px] font-mono animate-pulse">
-            ✓ Updated active tier to {selectedPlan}. Platform fee tier applied to new escrow PDAs.
+          <div className="p-4 bg-[#f4f0e8] border border-[#e7e2d8] text-[#141414] text-[13.5px] rounded-lg font-mono animate-pulse">
+            ✓ Updated active plan to {selectedPlan}. Platform fee tier applied to new escrow PDAs and ACID ledgers.
           </div>
         )}
       </div>
@@ -46,8 +81,15 @@ export default function PricingPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
         {plans.map((pKey) => {
           const plan = PRICING_PLANS[pKey];
-          const isCurrent = selectedPlan === pKey;
+          const isCurrent = (user?.plan || selectedPlan) === pKey;
           const isPopular = pKey === "Starter";
+
+          const priceDisplay =
+            currencyMode === "USD"
+              ? `$${plan.monthlyPriceUSD}`
+              : currencyMode === "INR"
+              ? `₹${plan.monthlyPriceINR}`
+              : `${plan.monthlyPriceSOL} SOL`;
 
           return (
             <div
@@ -72,8 +114,8 @@ export default function PricingPage() {
 
                 <div>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-[40px] font-light text-[#141414] tracking-tight font-mono">
-                      ₹{plan.monthlyPriceINR}
+                    <span className="text-[38px] font-light text-[#141414] tracking-tight font-mono">
+                      {priceDisplay}
                     </span>
                     <span className="text-[#736f68] text-[14px]">/month</span>
                   </div>
@@ -95,12 +137,12 @@ export default function PricingPage() {
                     <span className="text-[#141414]">{plan.maxTeamMembers}</span>
                   </div>
                   <div className="flex justify-between py-1 border-b border-[#f0ece4]">
-                    <span className="text-[#736f68]">Analytics Suite</span>
-                    <span className="text-[#141414]">{plan.analyticsLevel}</span>
+                    <span className="text-[#736f68]">Settlement Rails</span>
+                    <span className="text-[#141414] font-mono text-[12px]">Web2 (ACID) + Web3</span>
                   </div>
                   <div className="flex justify-between py-1 border-b border-[#f0ece4]">
-                    <span className="text-[#736f68]">Custom Branding</span>
-                    <span className="text-[#141414]">{plan.customBranding ? "✓" : "—"}</span>
+                    <span className="text-[#736f68]">Idempotency Ledger</span>
+                    <span className="text-emerald-700 font-semibold">Guaranteed</span>
                   </div>
                   <div className="flex justify-between py-1 border-b border-[#f0ece4]">
                     <span className="text-[#736f68]">RPC & API Access</span>
@@ -118,13 +160,13 @@ export default function PricingPage() {
                   onClick={() => handleUpgrade(pKey)}
                   className={`w-full h-11 text-[13.5px] font-medium transition-all flex items-center justify-center gap-2 ${
                     isCurrent
-                      ? "vault-btn-secondary opacity-60 cursor-default"
+                      ? "vault-btn-secondary opacity-70 cursor-default"
                       : isPopular
                       ? "vault-btn-primary"
                       : "vault-btn-secondary"
                   }`}
                 >
-                  {isCurrent ? "Active Tier" : `Select ${plan.name}`}
+                  {isCurrent ? "Current Tier" : `Select ${plan.name}`}
                 </button>
               </div>
             </div>

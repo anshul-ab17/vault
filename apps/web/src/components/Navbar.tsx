@@ -5,21 +5,12 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { Plus, ArrowRight, ArrowUpRight } from "lucide-react";
-import { getUserPlan } from "@/lib/store";
-import { useEffect, useState } from "react";
-import { SubscriptionPlan } from "@vault/shared";
+import { Plus, Mail, LogOut, User, Sparkles } from "lucide-react";
+import { useHybridAuth } from "@/context/HybridAuthContext";
 
 export function Navbar() {
   const pathname = usePathname();
-  const { publicKey } = useWallet();
-  const [plan, setPlan] = useState<SubscriptionPlan>("Starter");
-
-  useEffect(() => {
-    if (publicKey) {
-      setPlan(getUserPlan(publicKey.toBase58()));
-    }
-  }, [publicKey]);
+  const { user, isLoggedIn, logout, setOpenAuthModal } = useHybridAuth();
 
   const navLinks = [
     { href: "/tasks", label: "Bounties" },
@@ -29,7 +20,7 @@ export function Navbar() {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-[#e7e2d8] bg-[#faf8f5]/90 backdrop-blur-md transition-all duration-200">
+    <header className="fixed top-0 left-0 right-0 z-40 h-16 border-b border-[#e7e2d8] bg-[#faf8f5]/95 backdrop-blur-md transition-all duration-200">
       <div className="mx-auto w-full max-w-[1364px] px-6 sm:px-10 h-full flex items-center justify-between">
         <div className="flex items-center gap-10">
           <Link href="/" className="flex items-center gap-3 text-[#141414] group">
@@ -42,11 +33,11 @@ export function Navbar() {
               />
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="font-semibold text-[15px] tracking-tight text-[#141414] uppercase">
-                VAULT
+              <span className="font-serif font-medium text-[15px] tracking-[0.15em] text-[#141414] uppercase">
+                V.A.U.L.T.
               </span>
               <span className="text-[10px] font-mono tracking-widest uppercase text-[#9e7b4f]">
-                Solana Protocol
+                Hybrid Protocol
               </span>
             </div>
           </Link>
@@ -71,16 +62,54 @@ export function Navbar() {
           </nav>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3.5">
           <Link
             href="/dashboard/tasks/new"
-            className="vault-btn-secondary h-9 px-4 text-[12.5px] font-medium hidden sm:inline-flex items-center gap-1.5"
+            className="vault-btn-secondary h-9 px-3.5 text-[12.5px] font-medium hidden sm:inline-flex items-center gap-1.5"
           >
             <Plus className="size-3.5 text-[#9e7b4f]" />
-            <span>Fund Bounty</span>
+            <span>Inscribe Bounty</span>
           </Link>
 
-          <div className="origin-right scale-95">
+          {/* User Auth State or Login Button */}
+          {user ? (
+            <div className="flex items-center gap-2.5">
+              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#e7e2d8] bg-white text-[12px] font-mono text-[#141414]">
+                {user.authMethod === "Email_MagicLink" ? (
+                  <>
+                    <Mail className="size-3 text-[#9e7b4f]" />
+                    <span className="max-w-[130px] truncate">{user.email || user.displayName}</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="size-2 rounded-full bg-emerald-600 animate-pulse"></span>
+                    <span>{user.displayName}</span>
+                  </>
+                )}
+                <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#f5f2eb] text-[#736f68] uppercase font-semibold">
+                  {user.plan}
+                </span>
+              </div>
+              <button
+                onClick={logout}
+                title="Sign out"
+                className="p-2 rounded-lg border border-[#e7e2d8] bg-white text-[#736f68] hover:text-[#141414] hover:border-[#141414] transition-colors"
+              >
+                <LogOut className="size-3.5" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setOpenAuthModal(true)}
+              className="vault-btn-primary h-9 px-4 text-[12.5px] font-medium flex items-center gap-1.5"
+            >
+              <User className="size-3.5" />
+              <span>Sign In</span>
+            </button>
+          )}
+
+          {/* Web3 Solana Wallet Button */}
+          <div className="origin-right scale-90 hidden lg:block">
             <WalletMultiButton />
           </div>
         </div>

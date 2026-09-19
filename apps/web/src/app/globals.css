@@ -1,124 +1,137 @@
 @import "tailwindcss";
 
 :root {
-  --background: #faf8f5;
-  --foreground: #141414;
-  --muted: #736f68;
-  --muted-foreground: #736f68;
-  --edge: #e7e2d8;
-  --edge-subtle: #f0ece4;
-  --snow: #ffffff;
-  --stone-warm: #f4f0e8;
-  --stone-sand: #ede7dc;
-  --charcoal: #1f1f1f;
-  --luxury-gold: #9e7b4f;
-  --luxury-gold-light: #f6efe4;
-  --luxury-forest: #223127;
-  --primary: #141414;
-  --primary-foreground: #ffffff;
+  --background: #ffffff;
+  --foreground: #111111;
+  --muted: #666666;
+  --muted-foreground: #71717a;
+  --edge: #e4e4e7;
+  --edge-subtle: #f4f4f5;
+  --cap-blue-light: #eff6ff;
+  --cap-blue: #3b82f6;
+  --cap-blue-dark: #1d4ed8;
+  --cap-sky-bg: #f8fafc;
+  --cap-island-bg: #edf1f6;
 }
 
 body {
   color: var(--foreground);
-  background: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Garamond", "Georgia", serif;
+  background-color: #ffffff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.035'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   letter-spacing: -0.015em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Luxury Editorial Buttons */
+/* Cap-style tactile glass buttons */
+.cap-btn-primary,
 .vault-btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
-  background: #141414;
-  border: 1px solid #141414;
-  color: #f7f6f2;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #18181b 0%, #09090b 100%);
+  color: #ffffff;
   font-weight: 500;
-  letter-spacing: 0.02em;
-  padding: 0 1.25rem;
-  box-shadow: 0 2px 8px -2px rgba(20, 20, 20, 0.2);
+  letter-spacing: -0.01em;
+  padding: 0 1.35rem;
+  height: 46px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12), 0 8px 20px -6px rgba(0, 0, 0, 0.4);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.cap-btn-primary:hover,
 .vault-btn-primary:hover {
-  background: #262626;
-  border-color: #262626;
+  background: linear-gradient(180deg, #27272a 0%, #18181b 100%);
   transform: translateY(-1px);
-  box-shadow: 0 4px 14px -3px rgba(20, 20, 20, 0.25);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15), 0 12px 24px -6px rgba(0, 0, 0, 0.45);
 }
 
+.cap-btn-primary:active,
 .vault-btn-primary:active {
   transform: translateY(1px);
-  box-shadow: 0 1px 4px rgba(20, 20, 20, 0.2);
 }
 
+.cap-btn-secondary,
 .vault-btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: 12px;
   background: #ffffff;
-  border: 1px solid #dfd9ce;
-  color: #141414;
+  border: 1px solid #e4e4e7;
+  color: #09090b;
   font-weight: 500;
-  letter-spacing: 0.02em;
-  padding: 0 1.25rem;
-  box-shadow: 0 1px 3px rgba(20, 20, 20, 0.04);
+  letter-spacing: -0.01em;
+  padding: 0 1.35rem;
+  height: 46px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
 
+.cap-btn-secondary:hover,
 .vault-btn-secondary:hover {
-  background: #f7f5f0;
-  border-color: #cec6b7;
+  background: #f8fafc;
+  border-color: #d4d4d8;
   transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(20, 20, 20, 0.06);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
+.cap-btn-secondary:active,
 .vault-btn-secondary:active {
   transform: translateY(1px);
 }
 
-/* Luxury Editorial Cards */
+/* Cap Card & Island Containers */
+.cap-island {
+  border-radius: 28px;
+  background-color: #f8fafc;
+  border: 1px solid rgba(228, 228, 231, 0.8);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 20px 40px -15px rgba(0, 0, 0, 0.03);
+}
+
+.cap-card,
 .vault-card {
-  border-radius: 8px;
-  border: 1px solid #e7e2d8;
+  border-radius: 20px;
+  border: 1px solid #e4e4e7;
   background: #ffffff;
-  box-shadow: 0 4px 20px -8px rgba(20, 20, 20, 0.04);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 10px 24px -10px rgba(0, 0, 0, 0.04);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.cap-card:hover,
+.vault-card:hover {
+  border-color: #d4d4d8;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 16px 32px -12px rgba(0, 0, 0, 0.08);
+}
+
 .vault-card-subtle {
-  border-radius: 8px;
-  border: 1px solid #eae5db;
-  background: #f5f2eb;
+  border-radius: 16px;
+  border: 1px solid #e4e4e7;
+  background: #f8fafc;
 }
 
-.vault-hairline {
-  border-color: #e7e2d8;
-}
-
-/* Solana wallet adapter custom luxury override */
+/* Solana wallet adapter cap styling */
 .wallet-adapter-button {
-  height: 38px !important;
-  font-size: 12.5px !important;
+  height: 42px !important;
+  font-size: 13.5px !important;
   font-weight: 500 !important;
-  letter-spacing: 0.03em !important;
-  border-radius: 6px !important;
-  background-color: #141414 !important;
-  color: #faf8f5 !important;
-  padding: 0 14px !important;
+  letter-spacing: -0.01em !important;
+  border-radius: 10px !important;
+  background: #09090b !important;
+  color: #ffffff !important;
+  padding: 0 16px !important;
   font-family: inherit !important;
-  border: 1px solid #141414 !important;
-  box-shadow: 0 2px 6px rgba(20, 20, 20, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
   transition: all 0.2s ease !important;
 }
 
 .wallet-adapter-button:hover {
-  background-color: #262626 !important;
-  border-color: #262626 !important;
+  background: #18181b !important;
 }

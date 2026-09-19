@@ -19,361 +19,355 @@ import {
   FileCode2,
   Workflow,
   Zap,
+  CreditCard,
+  Hash,
+  Database,
+  Play,
+  Share2,
+  Flame,
+  CheckCheck,
 } from "lucide-react";
 
 export default function HomePage() {
-  const [activeMovement, setActiveMovement] = useState<number>(1);
+  const [activeMode, setActiveMode] = useState<"instant" | "studio" | "acid">("instant");
   const [boardTab, setBoardTab] = useState<"kanban" | "list">("kanban");
 
   return (
-    <div className="overflow-x-hidden space-y-32 pb-32">
-      {/* Editorial Hero Section */}
-      <section className="relative max-w-[1364px] mx-auto px-6 sm:px-10 pt-16 sm:pt-24 text-left">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end pb-16 border-b border-[#e7e2d8]">
-          <div className="lg:col-span-8 space-y-6">
-            <div className="inline-flex items-center gap-2.5 px-3 py-1 rounded-full border border-[#e7e2d8] bg-[#ffffff] text-[11.5px] font-mono tracking-widest text-[#736f68] uppercase shadow-xs">
-              <span className="size-1.5 rounded-full bg-[#9e7b4f]"></span>
-              <span>Solana Non-Custodial Protocol</span>
-              <span className="text-[#dcd6ca]">/</span>
-              <span className="text-[#141414]">Devnet Cluster</span>
-            </div>
-
-            <h1 className="text-[3.25rem] sm:text-[4.75rem] md:text-[5.5rem] font-[400] leading-[0.98] tracking-tight text-[#141414]">
-              Humanist precision. <br />
-              <span className="text-[#736f68] font-[300]">Deterministic escrow.</span>
-            </h1>
-
-            <p className="text-[17px] sm:text-[20px] text-[#736f68] max-w-2xl leading-relaxed font-normal">
-              A refined milestone architecture for engineering teams and artisans. Lock bounty capital inside program-derived accounts on Solana and release funds upon automated verification.
-            </p>
-          </div>
-
-          <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-4 lg:items-start">
-            <Link
-              href="/dashboard/tasks/new"
-              className="vault-btn-primary h-12 w-full sm:w-auto lg:w-full text-[14px] font-medium gap-2 justify-between"
-            >
-              <span>Initiate Escrow PDA</span>
-              <ArrowRight className="size-4 text-[#9e7b4f]" />
-            </Link>
-
+    <div className="w-full px-2.5 pb-16 sm:px-4 lg:px-8 space-y-16">
+      {/* Cap-style Outer Sky Island Hero Container */}
+      <div className="rounded-[28px] border border-zinc-200/80 bg-[#f8fafc] shadow-[0_1px_3px_rgba(0,0,0,0.02),0_20px_40px_-15px_rgba(0,0,0,0.03)] overflow-hidden">
+        {/* Soft Sky Gradient Top */}
+        <div className="relative px-6 pt-16 pb-20 sm:pt-20 sm:pb-24 text-center bg-gradient-to-b from-[#d9e7f8]/60 via-[#e6edf6]/40 to-[#f8fafc]">
+          <div className="relative mx-auto flex max-w-[940px] flex-col items-center">
+            
+            {/* Top Announcement Pill */}
             <Link
               href="/tasks"
-              className="vault-btn-secondary h-12 w-full sm:w-auto lg:w-full text-[14px] font-medium gap-2 justify-between"
+              className="group mb-8 inline-flex items-center gap-2.5 rounded-full bg-[#111111] py-1.5 pl-1.5 pr-4 text-[13px] leading-none text-white shadow-md transition-colors duration-200 hover:bg-[#2a2a2a]"
             >
-              <span>Explore Curated Bounties</span>
-              <ArrowUpRight className="size-4 text-[#736f68]" />
+              <span className="rounded-full bg-[#3b82f6] px-2.5 py-[5px] text-[10.5px] uppercase font-mono tracking-wider text-white font-semibold">
+                V1.0
+              </span>
+              <span className="font-medium">V.A.U.L.T. Hybrid Settlement is Live</span>
+              <span className="hidden text-white/60 transition-colors duration-200 group-hover:text-white sm:inline">
+                Explore Bounties
+              </span>
+              <ArrowRight className="size-3.5 text-white/70 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-white" />
             </Link>
+
+            {/* Mode Switcher Pill (Cap signature interaction) */}
+            <div className="mx-auto flex w-fit flex-nowrap items-center justify-center gap-1 rounded-full border border-[#dde4eb] bg-white/80 p-1.5 shadow-sm mb-10 backdrop-blur-xs">
+              <button
+                type="button"
+                onClick={() => setActiveMode("instant")}
+                className={`flex h-9 items-center gap-2 whitespace-nowrap rounded-full px-4 text-[13.5px] font-medium transition-all duration-200 ${
+                  activeMode === "instant"
+                    ? "bg-[#111111] text-white shadow-sm"
+                    : "text-[#111111]/60 hover:text-[#111111] hover:bg-black/5"
+                }`}
+              >
+                <Zap className="size-3.5" />
+                <span>Web3 Solana PDA</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveMode("acid")}
+                className={`flex h-9 items-center gap-2 whitespace-nowrap rounded-full px-4 text-[13.5px] font-medium transition-all duration-200 ${
+                  activeMode === "acid"
+                    ? "bg-[#111111] text-white shadow-sm"
+                    : "text-[#111111]/60 hover:text-[#111111] hover:bg-black/5"
+                }`}
+              >
+                <CreditCard className="size-3.5" />
+                <span>Web2 ACID Fiat</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveMode("studio")}
+                className={`flex h-9 items-center gap-2 whitespace-nowrap rounded-full px-4 text-[13.5px] font-medium transition-all duration-200 ${
+                  activeMode === "studio"
+                    ? "bg-[#111111] text-white shadow-sm"
+                    : "text-[#111111]/60 hover:text-[#111111] hover:bg-black/5"
+                }`}
+              >
+                <ShieldCheck className="size-3.5" />
+                <span>Arbitration Studio</span>
+              </button>
+            </div>
+
+            {/* Main Headline */}
+            <h1 className="text-[clamp(40px,6vw,76px)] font-normal leading-[0.98] tracking-[-0.035em] text-[#111111]">
+              Fund. Verify. Settle.
+            </h1>
+
+            {/* Subtitle */}
+            <p className="font-normal tracking-[-0.01em] mt-6 max-w-[640px] text-[17.5px] sm:text-[19px] leading-[1.5] text-[#111111]/75">
+              The high-trust programmable escrow protocol for engineering deliverables and bounties. Lock funds with zero counterparty risk across Web2 and Web3 rails.
+            </p>
+
+            {/* Action CTAs */}
+            <div className="mt-8 flex flex-col sm:flex-row items-center gap-3.5 w-full sm:w-auto">
+              <Link
+                href="/dashboard/tasks/new"
+                className="cap-btn-primary w-full sm:w-auto px-7 text-[15px] flex items-center justify-center gap-2 shadow-lg"
+              >
+                <span>Inscribe Escrow Bounty</span>
+                <ArrowRight className="size-4" />
+              </Link>
+
+              <Link
+                href="/tasks"
+                className="cap-btn-secondary w-full sm:w-auto px-6 text-[15px] flex items-center justify-center gap-2"
+              >
+                <span>Browse Registry</span>
+                <ArrowUpRight className="size-4 text-zinc-500" />
+              </Link>
+            </div>
+
+            {/* Interactive Preview Canvas Window (Cap signature interface) */}
+            <div className="mt-14 w-full max-w-[900px] rounded-2xl border border-zinc-200 bg-white p-3 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.08)]">
+              <div className="rounded-xl border border-zinc-100 bg-[#fafafa] p-6 sm:p-8 text-left space-y-6">
+                <div className="flex items-center justify-between pb-4 border-b border-zinc-200/80">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1.5">
+                      <span className="size-3 rounded-full bg-red-400"></span>
+                      <span className="size-3 rounded-full bg-amber-400"></span>
+                      <span className="size-3 rounded-full bg-emerald-400"></span>
+                    </div>
+                    <span className="text-[12px] font-mono text-zinc-500 font-medium">
+                      {activeMode === "instant" ? "solana://pda-escrow-fsm.rs" : activeMode === "acid" ? "postgres://acid-fiat-ledger.sql" : "oracle://arbitration-engine.ts"}
+                    </span>
+                  </div>
+
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium">
+                    <span className="size-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                    Zero Custodial Risk
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  <div className="p-4 rounded-xl bg-white border border-zinc-200 space-y-2">
+                    <div className="text-[11px] font-mono uppercase text-zinc-400 tracking-wider">01. INITIATE</div>
+                    <div className="text-[15px] font-medium text-zinc-900">Program Derived Lock</div>
+                    <p className="text-[12.5px] text-zinc-500 leading-snug">
+                      Reward funds are locked deterministically on-chain or in an ACID ledger.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-white border border-zinc-200 space-y-2">
+                    <div className="text-[11px] font-mono uppercase text-zinc-400 tracking-wider">02. VERIFY</div>
+                    <div className="text-[15px] font-medium text-zinc-900">PR Hash & Test Proof</div>
+                    <p className="text-[12.5px] text-zinc-500 leading-snug">
+                      Artisans submit GitHub deliverables with CI test run validation.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-white border border-zinc-200 space-y-2">
+                    <div className="text-[11px] font-mono uppercase text-zinc-400 tracking-wider">03. SETTLE</div>
+                    <div className="text-[15px] font-medium text-zinc-900">Instant Release</div>
+                    <p className="text-[12.5px] text-zinc-500 leading-snug">
+                      Atomic instruction splits contributor payout and protocol fee instantly.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
+      </div>
 
-        {/* Curated Luxury Artifact Showcase */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-12">
+      {/* Feature Grid with Cap clean cards */}
+      <div className="max-w-[1280px] mx-auto space-y-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-zinc-200">
+          <div>
+            <span className="text-[11px] font-mono uppercase tracking-widest text-[#3b82f6] font-semibold">
+              ARCHITECTURE & CAPABILITIES
+            </span>
+            <h2 className="text-[2.25rem] sm:text-[3rem] font-normal tracking-tight text-[#111111] mt-1">
+              Engineered for seamless payments.
+            </h2>
+          </div>
+          <p className="text-[15px] text-zinc-600 max-w-md">
+            Whether you build on Solana Devnet or require corporate USD fiat ledgers, V.A.U.L.T. guarantees deterministic settlement.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Card 1 */}
-          <div className="vault-card p-6 flex flex-col justify-between h-72 hover:-translate-y-1">
+          <div className="cap-card p-7 flex flex-col justify-between h-80">
             <div className="space-y-3">
-              <div className="flex items-center justify-between text-[11px] font-mono tracking-widest text-[#9e7b4f] uppercase">
-                <span>01. INVARIANT</span>
-                <span>NON-CUSTODIAL</span>
+              <div className="size-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 mb-4">
+                <Database className="size-5" />
               </div>
-              <h3 className="text-[18px] font-medium text-[#141414]">Program Derived Vault</h3>
-              <p className="text-[13.5px] text-[#736f68] leading-relaxed">
-                Funds reside strictly within program accounts governed by immutable cryptographic constraints on Solana.
+              <h3 className="text-[19px] font-semibold text-[#111111]">ACID Ledger Guarantees</h3>
+              <p className="text-[14px] text-zinc-600 leading-relaxed">
+                Serializable transaction isolation with row-level locks prevents race conditions and duplicate fund allocations.
               </p>
             </div>
-            <div className="pt-4 border-t border-[#f0ece4] flex items-center justify-between font-mono text-[11.5px] text-[#736f68]">
-              <span>pda://vault...98a</span>
-              <span className="text-[#141414] font-medium">0.75 SOL</span>
+            <div className="pt-4 border-t border-zinc-100 font-mono text-[11.5px] text-zinc-500 flex justify-between items-center">
+              <span>PostgreSQL SERIALIZABLE</span>
+              <span className="text-emerald-700 font-medium">✓ Verified</span>
             </div>
           </div>
 
           {/* Card 2 */}
-          <div className="vault-card p-6 flex flex-col justify-between h-72 hover:-translate-y-1 border-[#9e7b4f]/40 bg-[#fdfcfa]">
+          <div className="cap-card p-7 flex flex-col justify-between h-80 border-blue-500/30 bg-gradient-to-b from-white to-blue-50/20">
             <div className="space-y-3">
-              <div className="flex items-center justify-between text-[11px] font-mono tracking-widest text-[#9e7b4f] uppercase">
-                <span>02. VERIFICATION</span>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-800 text-[10px] font-medium">
-                  PASSED
-                </span>
+              <div className="size-10 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-600 mb-4">
+                <Coins className="size-5" />
               </div>
-              <h3 className="text-[18px] font-medium text-[#141414]">Proof of Deliverable</h3>
-              <p className="text-[13.5px] text-[#736f68] leading-relaxed">
-                Contributors submit repository pull requests and test suites. Deliverable hashes are immutably sequenced.
+              <h3 className="text-[19px] font-semibold text-[#111111]">Non-Custodial Solana PDAs</h3>
+              <p className="text-[14px] text-zinc-600 leading-relaxed">
+                Capital is isolated in Program Derived Accounts governed exclusively by Anchor smart contracts.
               </p>
             </div>
-            <div className="pt-4 border-t border-[#f0ece4] flex items-center justify-between font-mono text-[11.5px] text-[#736f68]">
-              <span>PR #142 Merged</span>
-              <span className="text-emerald-700 font-medium">Checks Pass</span>
+            <div className="pt-4 border-t border-zinc-100 font-mono text-[11.5px] text-zinc-500 flex justify-between items-center">
+              <span>Solana Block Time</span>
+              <span className="text-purple-700 font-medium">~400ms</span>
             </div>
           </div>
 
           {/* Card 3 */}
-          <div className="vault-card p-6 flex flex-col justify-between h-72 hover:-translate-y-1">
+          <div className="cap-card p-7 flex flex-col justify-between h-80">
             <div className="space-y-3">
-              <div className="flex items-center justify-between text-[11px] font-mono tracking-widest text-[#9e7b4f] uppercase">
-                <span>03. SETTLEMENT</span>
-                <span>ATOMIC</span>
+              <div className="size-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 mb-4">
+                <Hash className="size-5" />
               </div>
-              <h3 className="text-[18px] font-medium text-[#141414]">Deterministic Payout</h3>
-              <p className="text-[13.5px] text-[#736f68] leading-relaxed">
-                Single-transaction atomic execution releases bounty reward to the artisan and platform fee to the protocol treasury.
+              <h3 className="text-[19px] font-semibold text-[#111111]">Idempotent Webhooks</h3>
+              <p className="text-[14px] text-zinc-600 leading-relaxed">
+                Cryptographic request token hashing guarantees exactly-once execution, ensuring retries never trigger double-charging.
               </p>
             </div>
-            <div className="pt-4 border-t border-[#f0ece4] flex items-center justify-between font-mono text-[11.5px] text-[#736f68]">
-              <span>tx: 5k9...2kQ</span>
-              <span className="text-emerald-700 font-medium">✓ Settled</span>
+            <div className="pt-4 border-t border-zinc-100 font-mono text-[11.5px] text-zinc-500 flex justify-between items-center">
+              <span>Idempotency-Key</span>
+              <span className="text-emerald-700 font-medium">SHA-256</span>
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* The 4 Movements of Trust (Editorial Process) */}
-      <section className="max-w-[1364px] mx-auto px-6 sm:px-10">
-        <div className="pb-10 border-b border-[#e7e2d8] flex flex-col md:flex-row md:items-end justify-between gap-6">
+      {/* Interactive Board Showcase */}
+      <div className="max-w-[1280px] mx-auto space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4">
           <div>
-            <span className="text-[11px] font-mono uppercase tracking-widest text-[#9e7b4f]">
-              LIFECYCLE SPECIFICATION
+            <span className="text-[11px] font-mono uppercase tracking-widest text-[#3b82f6] font-semibold">
+              ACTIVE REGISTRY
             </span>
-            <h2 className="text-[2.5rem] sm:text-[3.25rem] font-[400] text-[#141414] tracking-tight mt-1">
-              The Four Movements of Trust
-            </h2>
-          </div>
-          <p className="text-[14.5px] text-[#736f68] max-w-md leading-relaxed">
-            Every agreement is inscribed on-chain with deterministic preconditions that govern each state transition.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-10">
-          {[
-            {
-              step: "I",
-              label: "INSCRIPTION",
-              title: "Covenant Definition",
-              desc: "The sponsor drafts exact technical requirements, deliverable URLs, and measurable acceptance criteria.",
-              meta: "State: Draft → Funded",
-            },
-            {
-              step: "II",
-              label: "ISOLATION",
-              title: "PDA Vault Lock",
-              desc: "SOL capital is deposited into a deterministic program account. Counterparty risk is reduced to zero.",
-              meta: "PDA Seed: escrow_id",
-            },
-            {
-              step: "III",
-              label: "CRAFT",
-              title: "Verified Delivery",
-              desc: "Artisans build the deliverable and submit verified GitHub pull requests with test coverage proof.",
-              meta: "CI Runner Validation",
-            },
-            {
-              step: "IV",
-              label: "RELEASE",
-              title: "Atomic Settlement",
-              desc: "Upon milestone confirmation, the smart contract splits payout and fee in a single atomic instruction.",
-              meta: "Solana Block Time: 400ms",
-            },
-          ].map((m, idx) => (
-            <div
-              key={idx}
-              className="vault-card p-7 flex flex-col justify-between h-84 hover:shadow-lg bg-white"
-            >
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-[20px] font-light text-[#9e7b4f]">{m.step}</span>
-                  <span className="text-[10.5px] font-mono tracking-widest uppercase text-[#736f68]">
-                    {m.label}
-                  </span>
-                </div>
-                <h3 className="text-[18px] font-medium text-[#141414]">{m.title}</h3>
-                <p className="text-[13.5px] text-[#736f68] leading-relaxed">{m.desc}</p>
-              </div>
-
-              <div className="pt-4 border-t border-[#f0ece4] font-mono text-[11px] text-[#9e7b4f]">
-                {m.meta}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Curated Bounty Gallery Preview */}
-      <section className="max-w-[1364px] mx-auto px-6 sm:px-10 space-y-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-[#e7e2d8]">
-          <div>
-            <span className="text-[11px] font-mono uppercase tracking-widest text-[#9e7b4f]">
-              WORKSTATION DIRECTORY
-            </span>
-            <h2 className="text-[2.25rem] sm:text-[2.75rem] font-[400] text-[#141414] tracking-tight mt-1">
-              Curated Open Bounties
+            <h2 className="text-[2rem] sm:text-[2.5rem] font-normal tracking-tight text-[#111111] mt-1">
+              Curated Bounty Registry
             </h2>
           </div>
 
-          <div className="inline-flex items-center gap-1 rounded-md border border-[#e7e2d8] bg-[#ffffff] p-1 text-[12px] font-mono shadow-xs">
+          <div className="inline-flex items-center gap-1 rounded-xl border border-zinc-200 bg-white p-1 text-[13px] font-medium shadow-xs">
             <button
               onClick={() => setBoardTab("kanban")}
-              className={`px-3 py-1 rounded transition-colors ${
+              className={`px-3.5 py-1.5 rounded-lg transition-colors ${
                 boardTab === "kanban"
-                  ? "bg-[#141414] text-white"
-                  : "text-[#736f68] hover:text-[#141414]"
+                  ? "bg-[#111111] text-white"
+                  : "text-zinc-600 hover:text-zinc-900"
               }`}
             >
               Kanban View
             </button>
             <button
               onClick={() => setBoardTab("list")}
-              className={`px-3 py-1 rounded transition-colors ${
+              className={`px-3.5 py-1.5 rounded-lg transition-colors ${
                 boardTab === "list"
-                  ? "bg-[#141414] text-white"
-                  : "text-[#736f68] hover:text-[#141414]"
+                  ? "bg-[#111111] text-white"
+                  : "text-zinc-600 hover:text-zinc-900"
               }`}
             >
-              Registry List
+              List View
             </button>
           </div>
         </div>
 
-        {/* Interactive Workspace Board */}
-        <div className="p-6 sm:p-8 rounded-xl bg-[#f5f2eb] border border-[#e7e2d8]">
+        <div className="rounded-2xl border border-zinc-200 bg-[#f8fafc] p-6 sm:p-8">
           {boardTab === "kanban" ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Column 1 */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between text-[12px] font-mono text-[#141414] px-1 uppercase tracking-wider">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-[12px] font-mono text-zinc-800 px-1 uppercase tracking-wider font-semibold">
                   <div className="flex items-center gap-2">
-                    <span className="size-2 rounded-full bg-sky-600"></span>
-                    <span className="font-semibold">Funded & Available</span>
+                    <span className="size-2 rounded-full bg-blue-600"></span>
+                    <span>Funded & Open</span>
                   </div>
-                  <span className="text-[#736f68]">2</span>
+                  <span className="text-zinc-400">2</span>
                 </div>
-
-                <div className="space-y-3">
-                  <div className="vault-card p-5 space-y-3 bg-white">
-                    <div className="flex items-center justify-between text-[11px] font-mono">
-                      <span className="px-2 py-0.5 rounded bg-[#f4f0e8] text-[#9e7b4f]">
-                        FRONTEND
-                      </span>
-                      <span className="font-medium text-[#141414]">0.75 SOL</span>
-                    </div>
-                    <h4 className="text-[14px] font-medium text-[#141414]">
-                      Build Next.js 15 Landing Page with Editorial Aesthetic
-                    </h4>
-                    <p className="text-[12.5px] text-[#736f68] leading-relaxed">
-                      Implement clean layout, tactile 3D buttons, and wallet adapter modal.
-                    </p>
-                    <div className="flex items-center justify-between text-[11px] text-[#736f68] font-mono pt-3 border-t border-[#f0ece4]">
-                      <span>Due Oct 15</span>
-                      <span>2 criteria</span>
-                    </div>
+                <div className="cap-card p-5 space-y-3">
+                  <div className="flex items-center justify-between text-[11px] font-mono">
+                    <span className="px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 font-medium">SOLANA PDA</span>
+                    <span className="font-semibold text-[#111111]">0.75 SOL</span>
                   </div>
-
-                  <div className="vault-card p-5 space-y-3 bg-white">
-                    <div className="flex items-center justify-between text-[11px] font-mono">
-                      <span className="px-2 py-0.5 rounded bg-[#f4f0e8] text-[#9e7b4f]">
-                        SMART CONTRACT
-                      </span>
-                      <span className="font-medium text-[#141414]">1.20 SOL</span>
-                    </div>
-                    <h4 className="text-[14px] font-medium text-[#141414]">
-                      Implement Anchor Escrow PDA Multi-Sig Authorization
-                    </h4>
-                    <p className="text-[12.5px] text-[#736f68] leading-relaxed">
-                      Write secure Rust CPI instruction for dual-party release validation.
-                    </p>
-                    <div className="flex items-center justify-between text-[11px] text-[#736f68] font-mono pt-3 border-t border-[#f0ece4]">
-                      <span>Due Oct 20</span>
-                      <span>4 criteria</span>
-                    </div>
+                  <h4 className="text-[14.5px] font-medium text-[#111111]">Build Next.js 15 Landing Page for Artisan Coffee</h4>
+                  <p className="text-[13px] text-zinc-500 line-clamp-2">High-converting hero with Framer Motion and 95+ PageSpeed.</p>
+                </div>
+                <div className="cap-card p-5 space-y-3">
+                  <div className="flex items-center justify-between text-[11px] font-mono">
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 font-medium">WEB2 FIAT</span>
+                    <span className="font-semibold text-[#111111]">$850 USD</span>
                   </div>
+                  <h4 className="text-[14.5px] font-medium text-[#111111]">PostgreSQL ACID Transaction Settlement Engine</h4>
+                  <p className="text-[13px] text-zinc-500 line-clamp-2">Idempotent webhook settlement with database row locking.</p>
                 </div>
               </div>
 
-              {/* Column 2 */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between text-[12px] font-mono text-[#141414] px-1 uppercase tracking-wider">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-[12px] font-mono text-zinc-800 px-1 uppercase tracking-wider font-semibold">
                   <div className="flex items-center gap-2">
-                    <span className="size-2 rounded-full bg-amber-600"></span>
-                    <span className="font-semibold">In Progress</span>
+                    <span className="size-2 rounded-full bg-amber-500"></span>
+                    <span>In Review</span>
                   </div>
-                  <span className="text-[#736f68]">1</span>
+                  <span className="text-zinc-400">1</span>
                 </div>
-
-                <div className="space-y-3">
-                  <div className="vault-card p-5 space-y-3 bg-white border-[#9e7b4f]/40">
-                    <div className="flex items-center justify-between text-[11px] font-mono">
-                      <span className="px-2 py-0.5 rounded bg-[#f6efe4] text-[#9e7b4f]">
-                        ACTIVE ARTISAN
-                      </span>
-                      <span className="font-medium text-[#141414]">0.50 SOL</span>
-                    </div>
-                    <h4 className="text-[14px] font-medium text-[#141414]">
-                      Automate GitHub Action PR Verification Webhook
-                    </h4>
-                    <p className="text-[12.5px] text-[#736f68] leading-relaxed">
-                      Sandboxed CI tests running on PR commits.
-                    </p>
-                    <div className="flex items-center justify-between text-[11px] text-[#736f68] font-mono pt-3 border-t border-[#f0ece4]">
-                      <span>Rev #1</span>
-                      <span className="text-amber-700">Tests Running...</span>
-                    </div>
+                <div className="cap-card p-5 space-y-3 border-amber-300">
+                  <div className="flex items-center justify-between text-[11px] font-mono">
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 font-medium">PR SUBMITTED</span>
+                    <span className="font-semibold text-[#111111]">$850 USD</span>
                   </div>
+                  <h4 className="text-[14.5px] font-medium text-[#111111]">ACID Database Handler & Stripe Idempotency Middleware</h4>
+                  <p className="text-[13px] text-zinc-500 line-clamp-2">Delivered PostgreSQL SERIALIZABLE repository and tests.</p>
                 </div>
               </div>
 
-              {/* Column 3 */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between text-[12px] font-mono text-[#141414] px-1 uppercase tracking-wider">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-[12px] font-mono text-zinc-800 px-1 uppercase tracking-wider font-semibold">
                   <div className="flex items-center gap-2">
                     <span className="size-2 rounded-full bg-emerald-600"></span>
-                    <span className="font-semibold">Settled & Released</span>
+                    <span>Settled & Released</span>
                   </div>
-                  <span className="text-[#736f68]">3</span>
+                  <span className="text-zinc-400">2</span>
                 </div>
-
-                <div className="space-y-3">
-                  <div className="vault-card p-5 space-y-3 bg-white opacity-95">
-                    <div className="flex items-center justify-between text-[11px] font-mono">
-                      <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-800">
-                        SETTLED
-                      </span>
-                      <span className="font-medium text-[#141414]">1.00 SOL</span>
-                    </div>
-                    <h4 className="text-[14px] font-medium text-[#141414]">
-                      Setup DDIA Event Sourcing & Indexer DB
-                    </h4>
-                    <p className="text-[12.5px] text-[#736f68] leading-relaxed">
-                      Append-only log for escrow state transitions and payouts.
-                    </p>
-                    <div className="flex items-center justify-between text-[11px] text-[#736f68] font-mono pt-3 border-t border-[#f0ece4]">
-                      <span>tx: 5uK8...9p2</span>
-                      <span className="text-emerald-700 font-medium">✓ Released</span>
-                    </div>
+                <div className="cap-card p-5 space-y-3">
+                  <div className="flex items-center justify-between text-[11px] font-mono">
+                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-medium">SETTLED</span>
+                    <span className="font-semibold text-[#111111]">1.20 SOL</span>
                   </div>
+                  <h4 className="text-[14.5px] font-medium text-[#111111]">Setup DDIA Event Sourcing & Indexer DB</h4>
+                  <p className="text-[13px] text-zinc-500 line-clamp-2">Append-only log for escrow state transitions.</p>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="space-y-2.5">
+            <div className="space-y-3">
               {[
-                { title: "Build Next.js 15 Landing Page with Editorial Aesthetic", sol: "0.75 SOL", status: "Funded", tag: "Frontend" },
-                { title: "Implement Anchor Escrow PDA Multi-Sig Authorization", sol: "1.20 SOL", status: "Funded", tag: "Rust" },
-                { title: "Automate GitHub Action PR Verification Webhook", sol: "0.50 SOL", status: "In Progress", tag: "CI/CD" },
-                { title: "Setup DDIA Event Sourcing & Indexer DB", sol: "1.00 SOL", status: "Paid", tag: "Database" },
+                { title: "Build Next.js 15 Landing Page for Artisan Coffee", reward: "0.75 SOL", status: "Funded", rail: "Web3 Solana PDA" },
+                { title: "PostgreSQL ACID Transaction Settlement Engine", reward: "$850 USD", status: "Submitted", rail: "Web2 ACID Fiat" },
+                { title: "Setup DDIA Event Sourcing & Indexer DB", reward: "1.20 SOL", status: "Paid", rail: "Web3 Solana PDA" },
               ].map((item, idx) => (
-                <div
-                  key={idx}
-                  className="vault-card p-4.5 flex items-center justify-between bg-white hover:border-[#141414] transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    <span className="font-mono text-[11px] text-[#9e7b4f]">0{idx + 1}</span>
-                    <span className="text-[14px] font-medium text-[#141414]">{item.title}</span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#f4f0e8] text-[#736f68]">
-                      {item.tag}
+                <div key={idx} className="cap-card p-4.5 flex items-center justify-between">
+                  <div className="flex items-center gap-3.5">
+                    <span className="font-mono text-[12px] text-zinc-400">0{idx + 1}</span>
+                    <span className="text-[14.5px] font-medium text-zinc-900">{item.title}</span>
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-zinc-100 text-zinc-700">
+                      {item.rail}
                     </span>
                   </div>
-                  <div className="flex items-center gap-6">
-                    <span className="text-[14px] font-mono font-medium text-[#141414]">{item.sol}</span>
-                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-500/10 text-emerald-800 font-medium">
+                  <div className="flex items-center gap-4">
+                    <span className="text-[14.5px] font-semibold text-zinc-900 font-mono">{item.reward}</span>
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-50 text-emerald-700 font-medium">
                       {item.status}
                     </span>
                   </div>
@@ -382,89 +376,28 @@ export default function HomePage() {
             </div>
           )}
         </div>
-      </section>
+      </div>
 
-      {/* DDIA Reliability Specifications */}
-      <section className="max-w-[1364px] mx-auto px-6 sm:px-10 border-t border-[#e7e2d8] pt-20">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-          <div className="lg:col-span-5 space-y-4">
-            <span className="text-[11px] font-mono uppercase tracking-widest text-[#9e7b4f]">
-              ENGINEERING INTEGRITY
-            </span>
-            <h2 className="text-[2.5rem] font-[400] text-[#141414] tracking-tight leading-tight">
-              Designing Data-Intensive Escrow Applications.
-            </h2>
-            <p className="text-[15px] text-[#736f68] leading-relaxed">
-              Every on-chain transition adheres to rigorous database engineering standards: idempotent instructions, append-only audit event streams, and verifiable zero-trust balance locks.
-            </p>
-          </div>
-
-          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="vault-card-subtle p-6 space-y-3">
-              <div className="size-8 rounded-[4px] bg-white border border-[#e7e2d8] flex items-center justify-center text-[#141414]">
-                <Lock className="size-4" />
-              </div>
-              <h3 className="text-[16px] font-medium text-[#141414]">Non-Custodial PDA Escrow</h3>
-              <p className="text-[13px] text-[#736f68] leading-relaxed">
-                Funds reside strictly inside Solana program accounts governed by deterministic cryptographic conditions.
-              </p>
-            </div>
-
-            <div className="vault-card-subtle p-6 space-y-3">
-              <div className="size-8 rounded-[4px] bg-white border border-[#e7e2d8] flex items-center justify-center text-[#141414]">
-                <Cpu className="size-4" />
-              </div>
-              <h3 className="text-[16px] font-medium text-[#141414]">Precondition-Guarded FSM</h3>
-              <p className="text-[13px] text-[#736f68] leading-relaxed">
-                State cannot skip transitions. An escrow must be Funded before Work is Submitted, and Verified before Paid.
-              </p>
-            </div>
-
-            <div className="vault-card-subtle p-6 space-y-3">
-              <div className="size-8 rounded-[4px] bg-white border border-[#e7e2d8] flex items-center justify-center text-[#141414]">
-                <Terminal className="size-4" />
-              </div>
-              <h3 className="text-[16px] font-medium text-[#141414]">Append-Only Audit Trail</h3>
-              <p className="text-[13px] text-[#736f68] leading-relaxed">
-                Every event, revision request, PR link, and settlement tx signature is permanently sequenced in the audit log.
-              </p>
-            </div>
-
-            <div className="vault-card-subtle p-6 space-y-3">
-              <div className="size-8 rounded-[4px] bg-white border border-[#e7e2d8] flex items-center justify-center text-[#141414]">
-                <Coins className="size-4" />
-              </div>
-              <h3 className="text-[16px] font-medium text-[#141414]">Atomic Split Execution</h3>
-              <p className="text-[13px] text-[#736f68] leading-relaxed">
-                Single-transaction release instruction ensures instant contributor reward and deterministic platform fee routing.
-              </p>
-            </div>
-          </div>
+      {/* Cap-style Bottom CTA Banner */}
+      <div className="max-w-[1280px] mx-auto rounded-[24px] bg-[#111111] p-10 sm:p-14 text-center text-white space-y-6 shadow-2xl">
+        <span className="text-[11px] font-mono tracking-widest uppercase text-[#3b82f6] font-semibold">
+          START WITH V.A.U.L.T.
+        </span>
+        <h2 className="text-[2.25rem] sm:text-[3.25rem] font-normal tracking-tight leading-tight max-w-2xl mx-auto">
+          Deterministic software delivery for modern engineering teams.
+        </h2>
+        <p className="text-[16px] text-zinc-400 max-w-xl mx-auto leading-relaxed">
+          Sign in via passwordless email or connect your Solana wallet to lock capital with zero counterparty risk.
+        </p>
+        <div className="pt-3 flex items-center justify-center gap-4">
+          <Link
+            href="/dashboard/tasks/new"
+            className="inline-flex items-center justify-center rounded-xl bg-white text-[#111111] px-7 h-12 text-[15px] font-medium hover:bg-zinc-100 transition-colors shadow-sm"
+          >
+            Inscribe First Escrow
+          </Link>
         </div>
-      </section>
-
-      {/* Grand Action Banner */}
-      <section className="max-w-[1364px] mx-auto px-6 sm:px-10">
-        <div className="rounded-2xl bg-[#141414] p-10 sm:p-16 text-center text-[#faf8f5] space-y-6 shadow-2xl">
-          <span className="text-[11px] font-mono tracking-widest uppercase text-[#9e7b4f]">
-            COVENANT INITIALIZATION
-          </span>
-          <h2 className="text-[2.5rem] sm:text-[3.5rem] font-[400] tracking-tight leading-tight max-w-2xl mx-auto">
-            Experience high-trust software delivery on Solana.
-          </h2>
-          <p className="text-[16px] text-[#a6a096] max-w-xl mx-auto leading-relaxed">
-            Connect your wallet to lock milestone reward capital into a dedicated escrow PDA with zero counterparty risk.
-          </p>
-          <div className="pt-4">
-            <Link
-              href="/dashboard/tasks/new"
-              className="inline-flex items-center justify-center rounded-[6px] bg-[#faf8f5] text-[#141414] px-8 h-12 text-[14px] font-medium hover:bg-[#ffffff] transition-colors shadow-sm"
-            >
-              Initiate First Escrow
-            </Link>
-          </div>
-        </div>
-      </section>
+      </div>
     </div>
   );
 }

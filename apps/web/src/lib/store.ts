@@ -1,13 +1,32 @@
-﻿import { EscrowTask, AuditEvent, SubscriptionPlan, PRICING_PLANS } from "@vault/shared";
+import { EscrowTask, AuditEvent, SubscriptionPlan, PRICING_PLANS, PaymentRail, FiatCurrency, IdempotencyRecord, AuthMethod } from "@vault/shared";
 
-// Local DDIA in-memory + local storage backed event log store for realistic zero-delay interaction and devnet synchronization
-const STORAGE_KEY = "vault_escrow_events_v1";
+const STORAGE_KEY = "vault_escrow_events_v2";
+const USER_KEY = "vault_current_user_v2";
+const IDEMPOTENCY_KEY = "vault_idempotency_ledger_v2";
+
+export interface CurrentUser {
+  id: string;
+  email?: string;
+  walletAddress?: string;
+  authMethod: AuthMethod;
+  displayName: string;
+  plan: SubscriptionPlan;
+}
+
+const INITIAL_USER: CurrentUser = {
+  id: "user_hybrid_sponsor_01",
+  email: "founder@artisanvault.studio",
+  authMethod: "Email_MagicLink",
+  displayName: "Artisan Studio HQ",
+  plan: "Starter",
+};
 
 const INITIAL_TASKS: EscrowTask[] = [
   {
-    id: "task-web-landing-001",
-    sponsorWallet: "7Yh9f...8N2q",
-    title: "Build Responsive Next.js Landing Page for Artisan Coffee",
+    id: "bounty-sol-001",
+    paymentRail: "Web3_Solana",
+    sponsorId: "7Yh9f...8N2q",
+    title: "Build Responsive Landing Page for Artisan Coffee",
     description: "Design and implement a modern, high-converting hero and menu section using Tailwind CSS and Framer Motion. Must achieve 95+ PageSpeed score.",
     acceptanceCriteria: [
       "Responsive layout for mobile, tablet, and desktop",
@@ -18,9 +37,7 @@ const INITIAL_TASKS: EscrowTask[] = [
     rewardAmountLamports: 750000000,
     platformFeePercent: 5,
     platformFeeSOL: 0.0375,
-    platformFeeLamports: 37500000,
     totalRequiredSOL: 0.7875,
-    totalRequiredLamports: 787500000,
     deadline: "2026-10-01",
     status: "Funded",
     escrowPdaAddress: "4VauLtPDA987xyz123abc456def789ghijk",
@@ -31,8 +48,9 @@ const INITIAL_TASKS: EscrowTask[] = [
     auditLogs: [
       {
         id: "evt-001",
-        taskId: "task-web-landing-001",
-        actorWallet: "7Yh9f...8N2q",
+        taskId: "bounty-sol-001",
+        actorId: "7Yh9f...8N2q",
+        actorType: "Solana_Wallet",
         eventType: "TASK_CREATED",
         previousState: null,
         newState: "Draft",
@@ -40,9 +58,10 @@ const INITIAL_TASKS: EscrowTask[] = [
       },
       {
         id: "evt-002",
-        taskId: "task-web-landing-001",
-        actorWallet: "7Yh9f...8N2q",
-        eventType: "TASK_FUNDED",
+        taskId: "bounty-sol-001",
+        actorId: "7Yh9f...8N2q",
+        actorType: "Solana_Wallet",
+        eventType: "ESCROW_PDA_FUNDED",
         previousState: "Draft",
         newState: "Funded",
         transactionSignature: "5k9JmG...2kQ8a",
@@ -51,37 +70,37 @@ const INITIAL_TASKS: EscrowTask[] = [
     ],
   },
   {
-    id: "task-api-stripe-002",
-    sponsorWallet: "4B19x...3L9z",
-    contributorWallet: "3Kp4w...9T7m",
-    title: "Automate Google Sheets & Solana Webhook Invoicing",
-    description: "Write a Node.js serverless script that watches Solana devnet escrow payment release events and generates automatic GST receipts in Google Drive.",
+    id: "bounty-fiat-002",
+    paymentRail: "Web2_Fiat",
+    sponsorId: "founder@artisanvault.studio",
+    contributorId: "alex.dev@techcraft.io",
+    title: "PostgreSQL ACID Transaction Settlement Engine with Stripe Webhooks",
+    description: "Write an idempotent Node.js webhook settlement engine with database row locking (SELECT FOR UPDATE) and auto-reconciliation.",
     acceptanceCriteria: [
-      "Webhook receiver parsing transaction signature",
-      "Google Drive PDF export script",
-      "Unit tests verifying idempotency against duplicate webhooks",
+      "ACID compliant SQL transaction wrapper with rollback on failure",
+      "Idempotency-Key HTTP header validation with SHA-256 caching",
+      "Automated PDF Invoice generation with GST/VAT support",
     ],
-    rewardAmountSOL: 1.20,
-    rewardAmountLamports: 1200000000,
+    fiatCurrency: "USD",
+    rewardAmountFiat: 850,
     platformFeePercent: 3,
-    platformFeeSOL: 0.036,
-    platformFeeLamports: 36000000,
-    totalRequiredSOL: 1.236,
-    totalRequiredLamports: 1236000000,
-    deadline: "2026-09-25",
+    platformFeeFiat: 25.5,
+    totalRequiredFiat: 875.5,
+    deadline: "2026-09-28",
     status: "Submitted",
-    escrowPdaAddress: "7VauLtPDA555xyz444abc333def222ghijk",
-    fundingTxSignature: "4jKlM9...8nBV2",
+    web2EscrowVaultId: "vault_ledger_usd_8829104",
+    idempotencyKey: "idem_tok_991823abce",
+    fundingTxSignature: "ch_stripe_3Nkm9821k09Lz",
     createdAt: "2026-09-17T08:30:00Z",
     updatedAt: "2026-09-19T11:20:00Z",
     submissions: [
       {
         id: "sub-001",
-        taskId: "task-api-stripe-002",
-        contributorWallet: "3Kp4w...9T7m",
-        title: "Initial Script & Webhook Idempotency Delivery",
-        description: "Implemented serverless handler with SHA256 deduplication and Google Drive PDF auto-generation. Verified across 10 Devnet test transactions.",
-        evidenceUrl: "https://github.com/vault-demos/solana-invoice-sync",
+        taskId: "bounty-fiat-002",
+        contributorId: "alex.dev@techcraft.io",
+        title: "ACID Database Handler & Stripe Idempotency Middleware",
+        description: "Delivered PostgreSQL isolation level SERIALIZABLE repository, Redis idempotency store, and tested concurrent duplicate requests.",
+        evidenceUrl: "https://github.com/vault-demos/acid-idempotent-settlement",
         revisionNumber: 1,
         submittedAt: "2026-09-19T11:20:00Z",
         status: "PendingReview",
@@ -90,8 +109,9 @@ const INITIAL_TASKS: EscrowTask[] = [
     auditLogs: [
       {
         id: "evt-101",
-        taskId: "task-api-stripe-002",
-        actorWallet: "4B19x...3L9z",
+        taskId: "bounty-fiat-002",
+        actorId: "founder@artisanvault.studio",
+        actorType: "Email_MagicLink",
         eventType: "TASK_CREATED",
         previousState: null,
         newState: "Draft",
@@ -99,18 +119,21 @@ const INITIAL_TASKS: EscrowTask[] = [
       },
       {
         id: "evt-102",
-        taskId: "task-api-stripe-002",
-        actorWallet: "4B19x...3L9z",
-        eventType: "TASK_FUNDED",
+        taskId: "bounty-fiat-002",
+        actorId: "founder@artisanvault.studio",
+        actorType: "Email_MagicLink",
+        eventType: "FIAT_ESCROW_ACID_LOCKED",
         previousState: "Draft",
         newState: "Funded",
-        transactionSignature: "4jKlM9...8nBV2",
+        transactionSignature: "ch_stripe_3Nkm9821k09Lz",
+        idempotencyKey: "idem_tok_991823abce",
         createdAt: "2026-09-17T08:35:00Z",
       },
       {
         id: "evt-103",
-        taskId: "task-api-stripe-002",
-        actorWallet: "3Kp4w...9T7m",
+        taskId: "bounty-fiat-002",
+        actorId: "alex.dev@techcraft.io",
+        actorType: "Email_MagicLink",
         eventType: "TASK_ACCEPTED",
         previousState: "Funded",
         newState: "InProgress",
@@ -118,8 +141,9 @@ const INITIAL_TASKS: EscrowTask[] = [
       },
       {
         id: "evt-104",
-        taskId: "task-api-stripe-002",
-        actorWallet: "3Kp4w...9T7m",
+        taskId: "bounty-fiat-002",
+        actorId: "alex.dev@techcraft.io",
+        actorType: "Email_MagicLink",
         eventType: "SUBMISSION_CREATED",
         previousState: "InProgress",
         newState: "Submitted",
@@ -128,6 +152,35 @@ const INITIAL_TASKS: EscrowTask[] = [
     ],
   },
 ];
+
+// In-Memory Idempotency Cache for ACID Guarantee simulation
+const idempotencyStore = new Map<string, IdempotencyRecord>();
+
+export function checkIdempotency(key: string): IdempotencyRecord | undefined {
+  if (typeof window === "undefined") return idempotencyStore.get(key);
+  try {
+    const raw = localStorage.getItem(IDEMPOTENCY_KEY);
+    if (!raw) return undefined;
+    const records: Record<string, IdempotencyRecord> = JSON.parse(raw);
+    return records[key];
+  } catch {
+    return undefined;
+  }
+}
+
+export function registerIdempotency(record: IdempotencyRecord): void {
+  idempotencyStore.set(record.idempotencyKey, record);
+  if (typeof window !== "undefined") {
+    try {
+      const raw = localStorage.getItem(IDEMPOTENCY_KEY);
+      const records: Record<string, IdempotencyRecord> = raw ? JSON.parse(raw) : {};
+      records[record.idempotencyKey] = record;
+      localStorage.setItem(IDEMPOTENCY_KEY, JSON.stringify(records));
+    } catch (e) {
+      console.error("Failed saving idempotency key", e);
+    }
+  }
+}
 
 export function getTasks(): EscrowTask[] {
   if (typeof window === "undefined") return INITIAL_TASKS;
@@ -149,14 +202,34 @@ export function saveTasks(tasks: EscrowTask[]): void {
   }
 }
 
-export function getUserPlan(walletAddress?: string): SubscriptionPlan {
-  if (typeof window === "undefined" || !walletAddress) return "Starter";
-  const saved = localStorage.getItem(`vault_plan_${walletAddress}`);
+export function getCurrentUser(): CurrentUser {
+  if (typeof window === "undefined") return INITIAL_USER;
+  const saved = localStorage.getItem(USER_KEY);
+  if (!saved) {
+    localStorage.setItem(USER_KEY, JSON.stringify(INITIAL_USER));
+    return INITIAL_USER;
+  }
+  try {
+    return JSON.parse(saved);
+  } catch {
+    return INITIAL_USER;
+  }
+}
+
+export function setCurrentUser(user: CurrentUser): void {
+  if (typeof window !== "undefined") {
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+  }
+}
+
+export function getUserPlan(actorId?: string): SubscriptionPlan {
+  if (typeof window === "undefined" || !actorId) return "Starter";
+  const saved = localStorage.getItem(`vault_plan_${actorId}`);
   return (saved as SubscriptionPlan) || "Starter";
 }
 
-export function setUserPlan(walletAddress: string, plan: SubscriptionPlan): void {
+export function setUserPlan(actorId: string, plan: SubscriptionPlan): void {
   if (typeof window !== "undefined") {
-    localStorage.setItem(`vault_plan_${walletAddress}`, plan);
+    localStorage.setItem(`vault_plan_${actorId}`, plan);
   }
 }

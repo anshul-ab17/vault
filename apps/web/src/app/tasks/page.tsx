@@ -103,7 +103,7 @@ export default function TasksPage() {
               className="vault-card p-6 sm:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-6 hover:shadow-lg transition-all group"
             >
               <div className="space-y-3 max-w-2xl">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5 flex-wrap">
                   <span
                     className={`px-2.5 py-0.5 rounded-full text-[11px] font-mono border font-medium ${getStatusBadge(
                       task.status
@@ -111,6 +111,17 @@ export default function TasksPage() {
                   >
                     {task.status}
                   </span>
+                  
+                  {task.paymentRail === "Web2_Fiat" ? (
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono border bg-amber-500/10 text-amber-900 border-amber-500/20 font-medium">
+                      Web2 Fiat ({task.fiatCurrency || "USD"}) • ACID
+                    </span>
+                  ) : (
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono border bg-purple-500/10 text-purple-900 border-purple-500/20 font-medium">
+                      Web3 Solana PDA
+                    </span>
+                  )}
+
                   <span className="text-[11.5px] font-mono text-[#736f68]">
                     Due {task.deadline}
                   </span>
@@ -127,9 +138,21 @@ export default function TasksPage() {
                   <span className="bg-[#f4f0e8] px-2.5 py-0.5 rounded text-[#141414]">
                     {task.acceptanceCriteria.length} acceptance criteria
                   </span>
-                  <span className="bg-[#f4f0e8] px-2.5 py-0.5 rounded text-[#9e7b4f]">
-                    PDA: {task.escrowPdaAddress ? task.escrowPdaAddress.slice(0, 10) + "..." : "Active"}
-                  </span>
+                  {task.escrowPdaAddress && (
+                    <span className="bg-[#f4f0e8] px-2.5 py-0.5 rounded text-[#9e7b4f]">
+                      PDA: {task.escrowPdaAddress.slice(0, 8)}...
+                    </span>
+                  )}
+                  {task.web2EscrowVaultId && (
+                    <span className="bg-[#f4f0e8] px-2.5 py-0.5 rounded text-[#9e7b4f]">
+                      Vault: {task.web2EscrowVaultId}
+                    </span>
+                  )}
+                  {task.idempotencyKey && (
+                    <span className="bg-emerald-500/10 text-emerald-800 px-2 py-0.5 rounded border border-emerald-500/20">
+                      Idempotent
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -139,7 +162,9 @@ export default function TasksPage() {
                     Milestone Reward
                   </span>
                   <span className="text-[22px] font-semibold text-[#141414] font-mono">
-                    {task.rewardAmountSOL} SOL
+                    {task.paymentRail === "Web2_Fiat"
+                      ? `${task.rewardAmountFiat} ${task.fiatCurrency || "USD"}`
+                      : `${task.rewardAmountSOL} SOL`}
                   </span>
                 </div>
 
