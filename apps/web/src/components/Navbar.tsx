@@ -46,7 +46,7 @@ export function Navbar() {
       <div className="mx-auto w-full max-w-[1364px] px-6 sm:px-10 h-full flex items-center justify-between">
         <div className="flex items-center gap-10">
           <Link href="/" className="flex items-center group">
-            <div className="relative size-8 rounded-[8px] overflow-hidden flex items-center justify-center p-1 bg-white border border-[#e7e2d8] shadow-xs transition-transform duration-200 group-hover:scale-105">
+            <div className="relative size-7 rounded-md overflow-hidden flex items-center justify-center opacity-85 transition-all duration-200 group-hover:opacity-100 group-hover:scale-105">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/vault.png"

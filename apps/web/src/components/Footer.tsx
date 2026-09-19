@@ -26,8 +26,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8 mb-16">
           {/* Brand Column (spans 2 cols on lg) */}
           <div className="lg:col-span-2 flex flex-col pr-0 lg:pr-10">
-            <Link href="/" className="flex items-center gap-3.5 mb-5 group w-fit">
-              <div className="relative size-9 rounded-lg overflow-hidden border border-[#e7e2d8] bg-white p-1.5 shadow-sm transition-transform duration-300 group-hover:scale-105">
+            <Link href="/" className="flex items-center gap-3 mb-5 group w-fit">
+              <div className="relative size-8 rounded-md overflow-hidden flex items-center justify-center opacity-85 transition-opacity duration-200 group-hover:opacity-100">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/vault.png"
