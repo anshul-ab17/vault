@@ -5,12 +5,20 @@ import Image from "next/image";
 export function Footer() {
   return (
     <footer className="relative border-t border-[#e7e2d8] bg-[#faf8f5] text-[#141414] overflow-hidden pt-16 pb-12">
-      {/* Giant subtle watermark/wordmark in background like DEX style */}
+      {/* Giant subtle watermark/wordmark with logo in background like DEX style */}
       <div 
-        className="pointer-events-none select-none absolute bottom-[-4vw] right-[-2vw] text-[18vw] font-serif font-light text-[#141414]/[0.025] leading-none tracking-tight -z-0 uppercase"
+        className="pointer-events-none select-none absolute bottom-[-3vw] right-[-1vw] flex items-center gap-6 opacity-[0.035] -z-0"
         aria-hidden="true"
       >
-        VAULT
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/vault.png"
+          alt=""
+          className="w-[14vw] h-[14vw] object-contain grayscale"
+        />
+        <span className="text-[16vw] font-serif font-light text-[#141414] leading-none tracking-wider uppercase">
+          V.A.U.L.T.
+        </span>
       </div>
 
       <div className="relative z-10 max-w-[1364px] mx-auto px-6 sm:px-10">
@@ -18,8 +26,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8 mb-16">
           {/* Brand Column (spans 2 cols on lg) */}
           <div className="lg:col-span-2 flex flex-col pr-0 lg:pr-10">
-            <Link href="/" className="flex items-center gap-3 mb-5 group w-fit">
-              <div className="relative size-8 rounded-lg overflow-hidden border border-[#e7e2d8] bg-white p-1 shadow-sm transition-transform duration-300 group-hover:scale-105">
+            <Link href="/" className="flex items-center gap-3.5 mb-5 group w-fit">
+              <div className="relative size-9 rounded-lg overflow-hidden border border-[#e7e2d8] bg-white p-1.5 shadow-sm transition-transform duration-300 group-hover:scale-105">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/vault.png"
@@ -28,10 +36,10 @@ export function Footer() {
                 />
               </div>
               <div className="flex flex-col">
-                <span className="font-serif text-lg tracking-wider text-[#141414] font-medium leading-none">
-                  VAULT
+                <span className="font-serif text-lg tracking-[0.2em] text-[#141414] font-medium leading-none">
+                  V.A.U.L.T.
                 </span>
-                <span className="text-[10px] uppercase font-mono tracking-widest text-[#736f68] mt-0.5">
+                <span className="text-[10px] uppercase font-mono tracking-widest text-[#736f68] mt-1">
                   Protocol Engine
                 </span>
               </div>
@@ -188,7 +196,7 @@ export function Footer() {
         {/* Bottom Bar: Copyright & Protocol Verification */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[12px] text-[#736f68]">
           <div className="flex items-center gap-2 font-mono">
-            <span>© 2026 VAULT Protocol.</span>
+            <span>© 2026 V.A.U.L.T. Protocol.</span>
             <span className="text-[#a6a096]">All rights reserved.</span>
           </div>
 
