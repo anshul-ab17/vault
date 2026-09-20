@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 750" width="100%" height="100%" fill="none">
+  <defs>
+    <radialGradient id="ambient-glow" cx="65%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#E0F2FE" stop-opacity="0.55"/>
+      <stop offset="60%" stop-color="#FCFCFB" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#FCFCFB" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="champagne-ribbon" x1="15%" y1="85%" x2="90%" y2="10%">
+      <stop offset="0%" stop-color="#FDE8D0" stop-opacity="0.0"/>
+      <stop offset="12%" stop-color="#F9E2CA" stop-opacity="0.75"/>
+      <stop offset="35%" stop-color="#F5D5B3" stop-opacity="0.95"/>
+      <stop offset="65%" stop-color="#EBBE90" stop-opacity="0.98"/>
+      <stop offset="88%" stop-color="#DFAC78" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#D79D64" stop-opacity="0.1"/>
+    </linearGradient>
+    <linearGradient id="champagne-secondary" x1="25%" y1="75%" x2="95%" y2="15%">
+      <stop offset="0%" stop-color="#FCE6D2" stop-opacity="0.0"/>
+      <stop offset="25%" stop-color="#F6D5B8" stop-opacity="0.85"/>
+      <stop offset="70%" stop-color="#EAB88B" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#DF9E67" stop-opacity="0.1"/>
+    </linearGradient>
+    <linearGradient id="blue-ribbon" x1="5%" y1="95%" x2="92%" y2="25%">
+      <stop offset="0%" stop-color="#BAE6FD" stop-opacity="0.05"/>
+      <stop offset="20%" stop-color="#7DD3FC" stop-opacity="0.75"/>
+      <stop offset="50%" stop-color="#38BDF8" stop-opacity="0.85"/>
+      <stop offset="78%" stop-color="#0284C7" stop-opacity="0.80"/>
+      <stop offset="100%" stop-color="#0369A1" stop-opacity="0.05"/>
+    </linearGradient>
+    <linearGradient id="champagne-crest" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="35%" stop-color="#FFFDF9" stop-opacity="0.9"/>
+      <stop offset="75%" stop-color="#FBE6D0" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#ECC59C" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="620" cy="380" rx="360" ry="280" fill="url(#ambient-glow)"/>
+  <!-- Lower Cyan Contour Flow Lines -->
+  <g>
+    <path d="M 80.0 750.0 C 260.0 570.0, 510.0 370.0, 780.0 260.0" stroke="#0284C7" stroke-opacity="0.040" stroke-width="1.15" fill="none"/>
+    <path d="M 88.3 744.9 C 266.9 564.3, 516.3 364.3, 786.3 253.7" stroke="#0284C7" stroke-opacity="0.040" stroke-width="1.14" fill="none"/>
+    <path d="M 96.6 739.7 C 273.7 558.6, 522.6 358.6, 792.6 247.4" stroke="#0284C7" stroke-opacity="0.071" stroke-width="1.13" fill="none"/>
+    <path d="M 104.9 734.6 C 280.6 552.9, 528.9 352.9, 798.9 241.1" stroke="#0284C7" stroke-opacity="0.106" stroke-width="1.12" fill="none"/>
+    <path d="M 113.1 729.4 C 287.4 547.1, 535.1 347.1, 805.1 234.9" stroke="#0284C7" stroke-opacity="0.141" stroke-width="1.11" fill="none"/>
+    <path d="M 121.4 724.3 C 294.3 541.4, 541.4 341.4, 811.4 228.6" stroke="#0284C7" stroke-opacity="0.174" stroke-width="1.10" fill="none"/>
+    <path d="M 129.7 719.1 C 301.1 535.7, 547.7 335.7, 817.7 222.3" stroke="#0284C7" stroke-opacity="0.205" stroke-width="1.09" fill="none"/>
+    <path d="M 138.0 714.0 C 308.0 530.0, 554.0 330.0, 824.0 216.0" stroke="#0284C7" stroke-opacity="0.235" stroke-width="1.08" fill="none"/>
+    <path d="M 146.3 708.9 C 314.9 524.3, 560.3 324.3, 830.3 209.7" stroke="#0284C7" stroke-opacity="0.263" stroke-width="1.07" fill="none"/>
+    <path d="M 154.6 703.7 C 321.7 518.6, 566.6 318.6, 836.6 203.4" stroke="#0284C7" stroke-opacity="0.289" stroke-width="1.06" fill="none"/>
+    <path d="M 162.9 698.6 C 328.6 512.9, 572.9 312.9, 842.9 197.1" stroke="#0284C7" stroke-opacity="0.313" stroke-width="1.05" fill="none"/>
+    <path d="M 171.1 693.4 C 335.4 507.1, 579.1 307.1, 849.1 190.9" stroke="#0284C7" stroke-opacity="0.334" stroke-width="1.04" fill="none"/>
+    <path d="M 179.4 688.3 C 342.3 501.4, 585.4 301.4, 855.4 184.6" stroke="#0284C7" stroke-opacity="0.352" stroke-width="1.03" fill="none"/>
+    <path d="M 187.7 683.1 C 349.1 495.7, 591.7 295.7, 861.7 178.3" stroke="#0284C7" stroke-opacity="0.368" stroke-width="1.02" fill="none"/>
+    <path d="M 196.0 678.0 C 356.0 490.0, 598.0 290.0, 868.0 172.0" stroke="#0284C7" stroke-opacity="0.380" stroke-width="1.01" fill="none"/>
+    <path d="M 204.3 672.9 C 362.9 484.3, 604.3 284.3, 874.3 165.7" stroke="#0284C7" stroke-opacity="0.390" stroke-width="1.00" fill="none"/>
+    <path d="M 212.6 667.7 C 369.7 478.6, 610.6 278.6, 880.6 159.4" stroke="#0284C7" stroke-opacity="0.396" stroke-width="0.99" fill="none"/>
+    <path d="M 220.9 662.6 C 376.6 472.9, 616.9 272.9, 886.9 153.1" stroke="#0284C7" stroke-opacity="0.400" stroke-width="0.98" fill="none"/>
+    <path d="M 229.1 657.4 C 383.4 467.1, 623.1 267.1, 893.1 146.9" stroke="#0284C7" stroke-opacity="0.400" stroke-width="0.97" fill="none"/>
+    <path d="M 237.4 652.3 C 390.3 461.4, 629.4 261.4, 899.4 140.6" stroke="#0284C7" stroke-opacity="0.396" stroke-width="0.96" fill="none"/>
+    <path d="M 245.7 647.1 C 397.1 455.7, 635.7 255.7, 905.7 134.3" stroke="#0284C7" stroke-opacity="0.390" stroke-width="0.95" fill="none"/>
+    <path d="M 254.0 642.0 C 404.0 450.0, 642.0 250.0, 912.0 128.0" stroke="#0284C7" stroke-opacity="0.380" stroke-width="0.94" fill="none"/>
+    <path d="M 262.3 636.9 C 410.9 444.3, 648.3 244.3, 918.3 121.7" stroke="#0284C7" stroke-opacity="0.368" stroke-width="0.93" fill="none"/>
+    <path d="M 270.6 631.7 C 417.7 438.6, 654.6 238.6, 924.6 115.4" stroke="#0284C7" stroke-opacity="0.352" stroke-width="0.92" fill="none"/>
+    <path d="M 278.9 626.6 C 424.6 432.9, 660.9 232.9, 930.9 109.1" stroke="#0284C7" stroke-opacity="0.334" stroke-width="0.91" fill="none"/>
+    <path d="M 287.1 621.4 C 431.4 427.1, 667.1 227.1, 937.1 102.9" stroke="#0284C7" stroke-opacity="0.313" stroke-width="0.90" fill="none"/>
+    <path d="M 295.4 616.3 C 438.3 421.4, 673.4 221.4, 943.4 96.6" stroke="#0284C7" stroke-opacity="0.289" stroke-width="0.89" fill="none"/>
+    <path d="M 303.7 611.1 C 445.1 415.7, 679.7 215.7, 949.7 90.3" stroke="#0284C7" stroke-opacity="0.263" stroke-width="0.88" fill="none"/>
+    <path d="M 312.0 606.0 C 452.0 410.0, 686.0 210.0, 956.0 84.0" stroke="#0284C7" stroke-opacity="0.235" stroke-width="0.87" fill="none"/>
+    <path d="M 320.3 600.9 C 458.9 404.3, 692.3 204.3, 962.3 77.7" stroke="#0284C7" stroke-opacity="0.205" stroke-width="0.86" fill="none"/>
+    <path d="M 328.6 595.7 C 465.7 398.6, 698.6 198.6, 968.6 71.4" stroke="#0284C7" stroke-opacity="0.174" stroke-width="0.85" fill="none"/>
+    <path d="M 336.9 590.6 C 472.6 392.9, 704.9 192.9, 974.9 65.1" stroke="#0284C7" stroke-opacity="0.141" stroke-width="0.84" fill="none"/>
+    <path d="M 345.1 585.4 C 479.4 387.1, 711.1 187.1, 981.1 58.9" stroke="#0284C7" stroke-opacity="0.106" stroke-width="0.83" fill="none"/>
+    <path d="M 353.4 580.3 C 486.3 381.4, 717.4 181.4, 987.4 52.6" stroke="#0284C7" stroke-opacity="0.071" stroke-width="0.82" fill="none"/>
+    <path d="M 361.7 575.1 C 493.1 375.7, 723.7 175.7, 993.7 46.3" stroke="#0284C7" stroke-opacity="0.040" stroke-width="0.81" fill="none"/>
+    <path d="M 370.0 570.0 C 500.0 370.0, 730.0 170.0, 1000.0 40.0" stroke="#0284C7" stroke-opacity="0.040" stroke-width="0.80" fill="none"/>
+  </g>
+  <!-- Soft Sky Blue Lower Ribbon Surface -->
+  <path d="M 80 750 C 230 600, 430 410, 710 220 C 800 160, 890 90, 990 30 C 940 80, 830 165, 660 290 C 470 430, 310 570, 80 750 Z" fill="url(#blue-ribbon)"/>
+  <!-- Secondary Champagne Fold -->
+  <path d="M 330 520 C 460 390, 620 250, 820 120 C 880 85, 930 45, 990 10 C 930 60, 800 155, 620 290 C 470 410, 380 480, 330 520 Z" fill="url(#champagne-secondary)"/>
+  <!-- Upper Champagne Contour Flow Lines -->
+  <g>
+    <path d="M 260.0 530.0 C 440.0 330.0, 650.0 180.0, 870.0 80.0" stroke="#D97706" stroke-opacity="0.040" stroke-width="0.75" fill="none"/>
+    <path d="M 271.1 521.1 C 448.9 322.2, 657.4 174.4, 874.8 77.0" stroke="#D97706" stroke-opacity="0.040" stroke-width="0.76" fill="none"/>
+    <path d="M 282.2 512.2 C 457.8 314.4, 664.8 168.9, 879.6 74.1" stroke="#D97706" stroke-opacity="0.074" stroke-width="0.77" fill="none"/>
+    <path d="M 293.3 503.3 C 466.7 306.7, 672.2 163.3, 884.4 71.1" stroke="#D97706" stroke-opacity="0.109" stroke-width="0.78" fill="none"/>
+    <path d="M 304.4 494.4 C 475.6 298.9, 679.6 157.8, 889.3 68.1" stroke="#D97706" stroke-opacity="0.144" stroke-width="0.79" fill="none"/>
+    <path d="M 315.6 485.6 C 484.4 291.1, 687.0 152.2, 894.1 65.2" stroke="#D97706" stroke-opacity="0.176" stroke-width="0.81" fill="none"/>
+    <path d="M 326.7 476.7 C 493.3 283.3, 694.4 146.7, 898.9 62.2" stroke="#D97706" stroke-opacity="0.206" stroke-width="0.82" fill="none"/>
+    <path d="M 337.8 467.8 C 502.2 275.6, 701.9 141.1, 903.7 59.3" stroke="#D97706" stroke-opacity="0.233" stroke-width="0.83" fill="none"/>
+    <path d="M 348.9 458.9 C 511.1 267.8, 709.3 135.6, 908.5 56.3" stroke="#D97706" stroke-opacity="0.257" stroke-width="0.84" fill="none"/>
+    <path d="M 360.0 450.0 C 520.0 260.0, 716.7 130.0, 913.3 53.3" stroke="#D97706" stroke-opacity="0.277" stroke-width="0.85" fill="none"/>
+    <path d="M 371.1 441.1 C 528.9 252.2, 724.1 124.4, 918.1 50.4" stroke="#D97706" stroke-opacity="0.294" stroke-width="0.86" fill="none"/>
+    <path d="M 382.2 432.2 C 537.8 244.4, 731.5 118.9, 923.0 47.4" stroke="#D97706" stroke-opacity="0.307" stroke-width="0.87" fill="none"/>
+    <path d="M 393.3 423.3 C 546.7 236.7, 738.9 113.3, 927.8 44.4" stroke="#D97706" stroke-opacity="0.315" stroke-width="0.88" fill="none"/>
+    <path d="M 404.4 414.4 C 555.6 228.9, 746.3 107.8, 932.6 41.5" stroke="#D97706" stroke-opacity="0.319" stroke-width="0.89" fill="none"/>
+    <path d="M 415.6 405.6 C 564.4 221.1, 753.7 102.2, 937.4 38.5" stroke="#D97706" stroke-opacity="0.319" stroke-width="0.91" fill="none"/>
+    <path d="M 426.7 396.7 C 573.3 213.3, 761.1 96.7, 942.2 35.6" stroke="#D97706" stroke-opacity="0.315" stroke-width="0.92" fill="none"/>
+    <path d="M 437.8 387.8 C 582.2 205.6, 768.5 91.1, 947.0 32.6" stroke="#D97706" stroke-opacity="0.307" stroke-width="0.93" fill="none"/>
+    <path d="M 448.9 378.9 C 591.1 197.8, 775.9 85.6, 951.9 29.6" stroke="#D97706" stroke-opacity="0.294" stroke-width="0.94" fill="none"/>
+    <path d="M 460.0 370.0 C 600.0 190.0, 783.3 80.0, 956.7 26.7" stroke="#D97706" stroke-opacity="0.277" stroke-width="0.95" fill="none"/>
+    <path d="M 471.1 361.1 C 608.9 182.2, 790.7 74.4, 961.5 23.7" stroke="#D97706" stroke-opacity="0.257" stroke-width="0.96" fill="none"/>
+    <path d="M 482.2 352.2 C 617.8 174.4, 798.1 68.9, 966.3 20.7" stroke="#D97706" stroke-opacity="0.233" stroke-width="0.97" fill="none"/>
+    <path d="M 493.3 343.3 C 626.7 166.7, 805.6 63.3, 971.1 17.8" stroke="#D97706" stroke-opacity="0.206" stroke-width="0.98" fill="none"/>
+    <path d="M 504.4 334.4 C 635.6 158.9, 813.0 57.8, 975.9 14.8" stroke="#D97706" stroke-opacity="0.176" stroke-width="0.99" fill="none"/>
+    <path d="M 515.6 325.6 C 644.4 151.1, 820.4 52.2, 980.7 11.9" stroke="#D97706" stroke-opacity="0.144" stroke-width="1.01" fill="none"/>
+    <path d="M 526.7 316.7 C 653.3 143.3, 827.8 46.7, 985.6 8.9" stroke="#D97706" stroke-opacity="0.109" stroke-width="1.02" fill="none"/>
+    <path d="M 537.8 307.8 C 662.2 135.6, 835.2 41.1, 990.4 5.9" stroke="#D97706" stroke-opacity="0.074" stroke-width="1.03" fill="none"/>
+    <path d="M 548.9 298.9 C 671.1 127.8, 842.6 35.6, 995.2 3.0" stroke="#D97706" stroke-opacity="0.040" stroke-width="1.04" fill="none"/>
+    <path d="M 560.0 290.0 C 680.0 120.0, 850.0 30.0, 1000.0 0.0" stroke="#D97706" stroke-opacity="0.040" stroke-width="1.05" fill="none"/>
+  </g>
+  <!-- Main Broad Warm Champagne / Sand Ribbon -->
+  <path d="M 240 560 C 370 410, 530 240, 770 95 C 840 50, 910 20, 1000 0 C 920 40, 780 125, 590 260 C 440 370, 340 470, 240 560 Z" fill="url(#champagne-ribbon)"/>
+  <!-- Champagne Crest Highlight Line -->
+  <path d="M 240 560 C 370 410, 530 240, 770 95 C 840 50, 910 20, 1000 0" stroke="url(#champagne-crest)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+</svg>
