@@ -1,8 +1,15 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export function Footer() {
+  const pathname = usePathname();
+  if (pathname === "/signin" || pathname === "/signup" || pathname === "/login") {
+    return null;
+  }
   return (
     <footer className="relative border-t border-[#e7e2d8] bg-[#faf8f5] text-[#141414] overflow-hidden pt-16 pb-12">
       {/* Giant subtle watermark/wordmark with logo in background like DEX style */}
