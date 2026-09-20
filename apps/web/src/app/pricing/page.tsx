@@ -22,12 +22,16 @@ export default function PricingPage() {
   return (
     <div className="max-w-[1240px] mx-auto px-6 sm:px-10 py-12 space-y-16">
       
-      {/* Header (TIERS -> Choose your tier. -> More security. More freedom. More value.) */}
-      <div className="text-center space-y-3 max-w-2xl mx-auto">
-        <span className="text-[11px] font-mono uppercase tracking-widest text-zinc-400 font-semibold">
-          Pricing
+      {/* Title matching FAQS style */}
+      <div className="border-b border-zinc-200/80 pb-3">
+        <span className="text-[11px] font-badge uppercase tracking-widest text-zinc-400 font-semibold">
+          PRICING
         </span>
-        <h1 className="text-[40px] sm:text-[48px] font-normal tracking-tight text-zinc-900 leading-tight">
+      </div>
+
+      {/* Header (Choose your tier. -> More security. More freedom. More value.) */}
+      <div className="text-center space-y-3 max-w-2xl mx-auto pt-4">
+        <h1 className="text-[40px] sm:text-[48px] font-heading font-semibold tracking-tight text-zinc-900 leading-tight">
           Choose your tier.
         </h1>
         <p className="text-[16px] text-zinc-500 max-w-lg mx-auto">

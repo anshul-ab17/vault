@@ -1,51 +1,176 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useHybridAuth } from "@/context/HybridAuthContext";
 import Link from "next/link";
 import { EscrowTask, TaskStatus } from "@vault/shared";
-import { getTasks, saveTasks, registerIdempotency, checkIdempotency } from "@/lib/store";
+import { getTasks, saveTasks } from "@/lib/store";
 import {
-  ExternalLink,
+  Search,
+  ChevronDown,
   Plus,
   ArrowRight,
-  RefreshCw,
-  Award,
-  CheckCircle2,
-  Check,
   Clock,
-  FileCode2,
-  CreditCard,
-  Coins,
-  ShieldCheck,
-  Hash,
-  Search,
-  Filter,
-  SlidersHorizontal,
-  ChevronRight,
-  Lock,
-  Sparkles,
   Layers,
-  ArrowUpRight,
+  Code2,
+  Palette,
+  Megaphone,
+  FlaskConical,
+  Shield,
+  CircleDot,
+  CheckCircle2,
+  Lock,
+  Coins,
+  CreditCard,
+  Briefcase,
+  User,
   GitPullRequest,
-  Eye,
+  Check,
+  RefreshCw,
+  ExternalLink,
+  Send,
+  X,
+  Sparkles,
+  DollarSign,
+  FileCheck,
+  TrendingUp,
 } from "lucide-react";
 
-export default function SponsorDashboard() {
-  const { publicKey } = useWallet();
-  const { user } = useHybridAuth();
+interface BountyItem {
+  id: string;
+  category: "Development" | "Design" | "Security" | "Marketing" | "Research" | "Other";
+  categoryBadgeClass: string;
+  budgetRange: string;
+  minBudget: number;
+  maxBudget: number;
+  title: string;
+  subtitle: string;
+  proposalsCount: number;
+  timeAgo: string;
+  createdAtDaysAgo: number;
+  description?: string;
+  requirements?: string[];
+}
+
+const INITIAL_IMAGE_BOUNTIES: BountyItem[] = [
+  {
+    id: "img-bounty-01",
+    category: "Development",
+    categoryBadgeClass: "bg-[#e0f2fe] text-[#0284c7]",
+    budgetRange: "$300 - $500",
+    minBudget: 300,
+    maxBudget: 500,
+    title: "Build a portfolio website",
+    subtitle: "Web Development",
+    proposalsCount: 12,
+    timeAgo: "2d ago",
+    createdAtDaysAgo: 2,
+    description: "Develop a bespoke modern portfolio website with smooth transitions, responsive grid layout, and dark/light mode toggle. Next.js and Tailwind CSS preferred.",
+    requirements: ["Clean modular Next.js 15 structure", "Responsive across mobile and desktop", "95+ Google PageSpeed score"],
+  },
+  {
+    id: "img-bounty-02",
+    category: "Design",
+    categoryBadgeClass: "bg-[#fef3c7] text-[#d97706]",
+    budgetRange: "$800 - $1,200",
+    minBudget: 800,
+    maxBudget: 1200,
+    title: "Brand identity package",
+    subtitle: "Branding",
+    proposalsCount: 8,
+    timeAgo: "1d ago",
+    createdAtDaysAgo: 1,
+    description: "Craft a comprehensive brand identity system including logo design, color typography guidelines, 3D asset concepts, and social media media kit.",
+    requirements: ["Vector logo files (SVG, AI, PDF)", "Comprehensive Figma brand system", "Social media templates & icon set"],
+  },
+  {
+    id: "img-bounty-03",
+    category: "Security",
+    categoryBadgeClass: "bg-[#dcfce7] text-[#16a34a]",
+    budgetRange: "$250 - $500",
+    minBudget: 250,
+    maxBudget: 500,
+    title: "Smart contract audit",
+    subtitle: "Security",
+    proposalsCount: 6,
+    timeAgo: "3d ago",
+    createdAtDaysAgo: 3,
+    description: "Audit custom Solana Anchor program escrow logic, test PDA rent-exemption checks, and ensure rigorous reentrancy and signature authorization guards.",
+    requirements: ["Comprehensive vulnerability report with severity matrix", "Fuzz testing reproduction scripts", "Actionable patch recommendations"],
+  },
+  {
+    id: "img-bounty-04",
+    category: "Marketing",
+    categoryBadgeClass: "bg-[#fae8ff] text-[#a855f7]",
+    budgetRange: "$100 - $300",
+    minBudget: 100,
+    maxBudget: 300,
+    title: "Community growth",
+    subtitle: "Marketing",
+    proposalsCount: 4,
+    timeAgo: "2d ago",
+    createdAtDaysAgo: 2,
+    description: "Execute organic developer outreach campaigns across Twitter/X and Discord to drive initial traction for a decentralized bounty protocol.",
+    requirements: ["Weekly engagement metrics report", "Engage 500+ active developer members", "Coordinated community AMA schedule"],
+  },
+  {
+    id: "img-bounty-05",
+    category: "Research",
+    categoryBadgeClass: "bg-[#e0e7ff] text-[#4f46e5]",
+    budgetRange: "$200 - $400",
+    minBudget: 200,
+    maxBudget: 400,
+    title: "Market analysis",
+    subtitle: "Research",
+    proposalsCount: 3,
+    timeAgo: "4d ago",
+    createdAtDaysAgo: 4,
+    description: "Produce a detailed comparative analysis of Web3 escrow protocols vs Web2 freelance escrow platforms with fees and volume breakdowns.",
+    requirements: ["10-page formatted PDF report with charts", "Data sources cited", "Competitor matrix covering 8 platforms"],
+  },
+  {
+    id: "img-bounty-06",
+    category: "Development",
+    categoryBadgeClass: "bg-[#e0f2fe] text-[#0284c7]",
+    budgetRange: "$500 - $1,000",
+    minBudget: 500,
+    maxBudget: 1000,
+    title: "Solana program development",
+    subtitle: "Blockchain",
+    proposalsCount: 7,
+    timeAgo: "5d ago",
+    createdAtDaysAgo: 5,
+    description: "Implement custom Anchor escrow smart contracts supporting partial milestone releases and multi-signature authorization on Solana devnet/mainnet.",
+    requirements: ["Rust / Anchor framework", "100% test coverage with Mocha/Bankrun", "Audited PDA seed derivation"],
+  },
+];
+
+function DashboardContent() {
+  const searchParams = useSearchParams();
+  const initialMode = searchParams.get("mode") === "agent" ? "agent" : "client";
+
+  const [activeTab, setActiveTab] = useState<"client" | "agent">(initialMode);
   const [tasks, setTasks] = useState<EscrowTask[]>([]);
   const [selectedTask, setSelectedTask] = useState<EscrowTask | null>(null);
-  const [feedback, setFeedback] = useState("");
+  const [isInspecting, setIsInspecting] = useState(false);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
 
-  // Table & Filter state
-  const [activeTab, setActiveTab] = useState<"active" | "completed" | "drafts">("active");
+  // Agent mode states (matching ui/image.png)
   const [searchQuery, setSearchQuery] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("ALL");
-  const [sortBy, setSortBy] = useState<"newest" | "highest" | "deadline">("newest");
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [selectedBudget, setSelectedBudget] = useState("Budget");
+  const [selectedSort, setSelectedSort] = useState("Latest");
+  const [openDropdown, setOpenDropdown] = useState<"category" | "budget" | "sort" | null>(null);
+
+  // Proposal modal state for agents
+  const [selectedBounty, setSelectedBounty] = useState<BountyItem | null>(null);
+  const [showApplyModal, setShowApplyModal] = useState(false);
+  const [bidAmount, setBidAmount] = useState("");
+  const [deliveryDays, setDeliveryDays] = useState("7 Days");
+  const [coverLetter, setCoverLetter] = useState("");
+  const [appliedSuccess, setAppliedSuccess] = useState(false);
 
   useEffect(() => {
     const list = getTasks();
@@ -55,718 +180,588 @@ export default function SponsorDashboard() {
     }
   }, []);
 
-  const handleApproveAndRelease = (task: EscrowTask) => {
-    setIsProcessing(true);
-    const releaseIdempotencyKey = `release_idem_${task.id}_${Date.now()}`;
-
-    // ACID Idempotency Check
-    const existing = checkIdempotency(releaseIdempotencyKey);
-    if (existing && existing.status === "PROCESSED") {
-      alert("This payout has already been processed.");
-      setIsProcessing(false);
-      return;
-    }
-
-    const signature =
-      task.paymentRail === "Web2_Fiat"
-        ? `ch_stripe_payout_${Math.random().toString(36).substring(2, 12)}`
-        : `5releaseTx${Math.random().toString(36).substring(2, 12)}`;
-
-    const actorId = user?.email || user?.walletAddress || publicKey?.toBase58() || "Sponsor";
-    const actorType = user?.authMethod || (publicKey ? "Solana_Wallet" : "Email_MagicLink");
-
-    const updated: EscrowTask = {
-      ...task,
-      status: "Paid",
-      payoutTxSignature: signature,
-      updatedAt: new Date().toISOString(),
-      auditLogs: [
-        ...task.auditLogs,
-        {
-          id: `evt-${Date.now()}`,
-          taskId: task.id,
-          actorId,
-          actorType,
-          eventType: task.paymentRail === "Web2_Fiat" ? "FIAT_ESCROW_ACID_RELEASED" : "TASK_APPROVED_AND_PAID",
-          previousState: task.status,
-          newState: "Paid",
-          transactionSignature: signature,
-          idempotencyKey: releaseIdempotencyKey,
-          metadata: {
-            amount: task.paymentRail === "Web2_Fiat" ? task.rewardAmountFiat : task.rewardAmountSOL,
-            currency: task.paymentRail === "Web2_Fiat" ? task.fiatCurrency : "SOL",
-            settlementGuarantee: "ACID_SERIALIZABLE_COMMITTED",
-          },
-          createdAt: new Date().toISOString(),
-        },
-      ],
-    };
-
-    registerIdempotency({
-      idempotencyKey: releaseIdempotencyKey,
-      taskId: task.id,
-      action: "ESCROW_PAYOUT_RELEASE",
-      status: "PROCESSED",
-      responseHash: `sha256_${Math.random().toString(36).substring(2, 16)}`,
-      createdAt: new Date().toISOString(),
-      expiresAt: new Date(Date.now() + 86400000).toISOString(),
-    });
-
-    const nextTasks = tasks.map((t) => (t.id === task.id ? updated : t));
-    setTasks(nextTasks);
-    setSelectedTask(updated);
-    saveTasks(nextTasks);
-    setIsProcessing(false);
-
-    const amountLabel =
-      task.paymentRail === "Web2_Fiat"
-        ? `${task.rewardAmountFiat} ${task.fiatCurrency || "USD"}`
-        : `${task.rewardAmountSOL} SOL`;
-
-    setActionMessage(`✓ Inscribed idempotent release of ${amountLabel}. Reference: ${signature.slice(0, 16)}...`);
-    setTimeout(() => setActionMessage(null), 5000);
+  const handleApply = (e: React.FormEvent) => {
+    e.preventDefault();
+    setAppliedSuccess(true);
+    setTimeout(() => {
+      setAppliedSuccess(false);
+      setShowApplyModal(false);
+      setCoverLetter("");
+      setBidAmount("");
+      setActionMessage(`✓ Proposal for "${selectedBounty?.title}" submitted to client!`);
+      setTimeout(() => setActionMessage(null), 4000);
+    }, 1200);
   };
 
-  const handleRequestRevision = (task: EscrowTask) => {
-    if (!feedback.trim()) return;
-    const actorId = user?.email || user?.walletAddress || publicKey?.toBase58() || "Sponsor";
-    const actorType = user?.authMethod || (publicKey ? "Solana_Wallet" : "Email_MagicLink");
-
-    const updated: EscrowTask = {
-      ...task,
-      status: "RevisionRequested",
-      updatedAt: new Date().toISOString(),
-      submissions: task.submissions.map((sub, i) =>
-        i === task.submissions.length - 1
-          ? { ...sub, status: "RevisionRequested", sponsorFeedback: feedback }
-          : sub
-      ),
-      auditLogs: [
-        ...task.auditLogs,
-        {
-          id: `evt-${Date.now()}`,
-          taskId: task.id,
-          actorId,
-          actorType,
-          eventType: "REVISION_REQUESTED",
-          previousState: task.status,
-          newState: "RevisionRequested",
-          metadata: { feedback },
-          createdAt: new Date().toISOString(),
-        },
-      ],
-    };
-
-    const nextTasks = tasks.map((t) => (t.id === task.id ? updated : t));
-    setTasks(nextTasks);
-    setSelectedTask(updated);
-    saveTasks(nextTasks);
-    setFeedback("");
-    setActionMessage("✓ Revision guidance sent to artisan.");
-    setTimeout(() => setActionMessage(null), 5000);
-  };
-
-  // Filter and sort for the Bounties Table (from active and time line of bounties in dashbiard.png)
-  const filteredTableTasks = tasks
-    .filter((t) => {
-      // Tab filter
-      if (activeTab === "active" && (t.status === "Paid" || t.status === "Approved")) return false;
-      if (activeTab === "completed" && t.status !== "Paid" && t.status !== "Approved") return false;
-      if (activeTab === "drafts") return false; // currently all created tasks are funded
-
-      // Search filter
-      const matchesSearch =
-        t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        t.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        t.id.toLowerCase().includes(searchQuery.toLowerCase());
-
-      // Category filter
-      const matchesCat =
-        categoryFilter === "ALL" ||
-        (categoryFilter === "Development" && (t.title.includes("Solana") || t.title.includes("PostgreSQL") || t.title.includes("Engine") || t.title.includes("Dashboard"))) ||
-        (categoryFilter === "Design" && t.title.includes("Design")) ||
-        (categoryFilter === "Security" && t.title.includes("Security"));
-
-      return matchesSearch && matchesCat;
-    })
-    .sort((a, b) => {
-      if (sortBy === "highest") {
-        const aVal = a.paymentRail === "Web2_Fiat" ? a.rewardAmountFiat || 0 : (a.rewardAmountSOL || 0) * 150;
-        const bVal = b.paymentRail === "Web2_Fiat" ? b.rewardAmountFiat || 0 : (b.rewardAmountSOL || 0) * 150;
-        return bVal - aVal;
+  const handleReleaseEscrow = (task: EscrowTask) => {
+    const updated = tasks.map((t) => {
+      if (t.id === task.id) {
+        return {
+          ...t,
+          status: "Paid" as TaskStatus,
+          payoutTxSignature: t.paymentRail === "Web3_Solana" ? "4RzM9...solPayoutTx" : "ch_stripe_paid_9918",
+          updatedAt: new Date().toISOString(),
+        };
       }
-      return 0;
+      return t;
     });
+    setTasks(updated);
+    saveTasks(updated);
+    if (selectedTask?.id === task.id) {
+      setSelectedTask({ ...selectedTask, status: "Paid" });
+    }
+    setActionMessage(
+      `✓ Escrow released! Funds disbursed to contributor via ${
+        task.paymentRail === "Web3_Solana" ? "Solana PDA" : "Web2 ACID Payout"
+      }.`
+    );
+    setTimeout(() => setActionMessage(null), 5000);
+  };
 
-  const activeCount = tasks.filter((t) => t.status !== "Paid" && t.status !== "Approved").length;
-  const completedCount = tasks.filter((t) => t.status === "Paid" || t.status === "Approved").length;
+  const handleCancelEscrow = (task: EscrowTask) => {
+    const updated = tasks.map((t) => {
+      if (t.id === task.id) {
+        return {
+          ...t,
+          status: "Cancelled" as TaskStatus,
+          updatedAt: new Date().toISOString(),
+        };
+      }
+      return t;
+    });
+    setTasks(updated);
+    saveTasks(updated);
+    if (selectedTask?.id === task.id) {
+      setSelectedTask({ ...selectedTask, status: "Cancelled" });
+    }
+    setActionMessage(`✓ Escrow cancelled. Funds refunded back to sponsor.`);
+    setTimeout(() => setActionMessage(null), 5000);
+  };
 
-  const currentTimelineStep = selectedTask
-    ? selectedTask.status === "Funded"
-      ? 1
-      : selectedTask.status === "InProgress"
-      ? 2
-      : selectedTask.status === "Submitted"
-      ? 3
-      : 4
-    : 1;
+  // Agent bounties list
+  const agentBounties = INITIAL_IMAGE_BOUNTIES.filter((item) => {
+    if (selectedCategory !== "All Categories" && item.category !== selectedCategory) return false;
+    if (selectedBudget === "Under $250" && item.minBudget >= 250) return false;
+    if (selectedBudget === "$250 - $500" && (item.maxBudget < 250 || item.minBudget > 500)) return false;
+    if (selectedBudget === "$500 - $1,000" && (item.maxBudget < 500 || item.minBudget > 1000)) return false;
+    if (selectedBudget === "$1,000+" && item.maxBudget < 1000) return false;
+
+    if (searchQuery.trim() !== "") {
+      const q = searchQuery.toLowerCase();
+      return (
+        item.title.toLowerCase().includes(q) ||
+        item.subtitle.toLowerCase().includes(q) ||
+        item.category.toLowerCase().includes(q)
+      );
+    }
+    return true;
+  }).sort((a, b) => {
+    if (selectedSort === "Latest") return a.createdAtDaysAgo - b.createdAtDaysAgo;
+    if (selectedSort === "Oldest") return b.createdAtDaysAgo - a.createdAtDaysAgo;
+    if (selectedSort === "Highest Budget") return b.maxBudget - a.maxBudget;
+    if (selectedSort === "Most Proposals") return b.proposalsCount - a.proposalsCount;
+    return 0;
+  });
 
   return (
-    <div className="max-w-[1364px] mx-auto px-6 sm:px-10 py-10 space-y-10">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-6 border-b border-zinc-200">
-        <div>
-          <span className="text-[11px] font-mono uppercase tracking-widest text-blue-600 font-semibold">
-            SPONSOR SUITE
-          </span>
-          <h1 className="text-[32px] sm:text-[40px] font-normal text-zinc-900 tracking-tight mt-1">
-            Powering builders with real capital.
-          </h1>
-          <p className="text-[15px] text-zinc-500 mt-1">
-            Fund bounties, support talent, and drive innovation with transparent, programmable escrow.
-          </p>
-        </div>
-
-        <Link
-          href="/dashboard/tasks/new"
-          className="cap-btn-primary h-10 px-5 text-[13.5px] flex items-center gap-2"
-        >
-          <Plus className="size-4" />
-          <span>Fund New Bounty</span>
-        </Link>
-      </div>
-
-      {/* 4 Protocol Metric Pillars */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-xs space-y-1">
-          <div className="text-[26px] font-mono font-semibold text-zinc-900">100%</div>
-          <div className="text-[12.5px] text-zinc-500 font-medium">On-chain Security</div>
-        </div>
-
-        <div className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-xs space-y-1">
-          <div className="text-[26px] font-mono font-semibold text-zinc-900">&lt; 5 min</div>
-          <div className="text-[12.5px] text-zinc-500 font-medium">Escrow Creation</div>
-        </div>
-
-        <div className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-xs space-y-1">
-          <div className="text-[26px] font-mono font-semibold text-zinc-900">0</div>
-          <div className="text-[12.5px] text-zinc-500 font-medium">Manual Payouts</div>
-        </div>
-
-        <div className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-xs space-y-1">
-          <div className="text-[26px] font-mono font-semibold text-emerald-600">Dual-Rail</div>
-          <div className="text-[12.5px] text-zinc-500 font-medium">Crypto & Fiat Settlement</div>
-        </div>
-      </div>
-
+    <div className="w-full min-h-screen bg-[#FCFCFB] text-zinc-900 pt-20 pb-28">
+      
+      {/* Action toast */}
       {actionMessage && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-900 text-[13.5px] rounded-xl font-mono flex items-center gap-2.5">
-          <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
+        <div className="fixed bottom-8 right-8 z-50 p-4 rounded-2xl bg-zinc-950 text-white text-[13.5px] font-medium flex items-center gap-3 shadow-xl animate-in fade-in slide-in-from-bottom-3 duration-300">
+          <CheckCircle2 className="size-4 text-emerald-400" />
           <span>{actionMessage}</span>
         </div>
       )}
 
-      {/* SECTION 1: BOUNTY TIMELINE (Matching active and time line of bounties in dashbiard.png) */}
-      <div className="bg-white rounded-2xl border border-zinc-200 p-6 sm:p-8 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-100">
+      <div className="max-w-[1364px] mx-auto px-6 sm:px-10">
+        
+        {/* TOP CONTROLS & SEPARATION TABS */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 pt-4">
           <div>
-            <h2 className="text-[20px] font-medium text-zinc-900">Bounty Timeline</h2>
-            <p className="text-[13px] text-zinc-500 mt-0.5">From funding to final release</p>
-          </div>
-          {selectedTask && (
-            <div className="flex items-center gap-2">
-              <span className="text-[12px] font-mono text-zinc-400">Inspecting:</span>
-              <span className="text-[12px] font-mono font-semibold text-zinc-800 bg-zinc-100 px-2.5 py-1 rounded-lg">
-                {selectedTask.title}
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[11px] font-badge uppercase tracking-widest text-zinc-400 font-semibold">
+                {activeTab === "client" ? "CLIENT ESCROW VAULT" : "AGENTS & ARTISANS HUB"}
               </span>
             </div>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-6 items-center">
-          {/* Vertical Stepper */}
-          <div className="lg:col-span-7 space-y-6">
-            {/* Step 1: Bounty Funded */}
-            <div className="flex items-start gap-4">
-              <div className="flex flex-col items-center">
-                <div className={`size-8 rounded-full flex items-center justify-center font-mono text-[12px] font-semibold transition-all ${
-                  currentTimelineStep >= 1
-                    ? "bg-emerald-500 text-white ring-4 ring-emerald-100"
-                    : "bg-zinc-100 text-zinc-400"
-                }`}>
-                  ✓
-                </div>
-                <div className={`w-0.5 h-10 my-1 ${currentTimelineStep >= 2 ? "bg-emerald-400" : "bg-zinc-200"}`} />
-              </div>
-              <div className="pt-1">
-                <h4 className="text-[15px] font-medium text-zinc-900">Bounty Funded</h4>
-                <p className="text-[13px] text-zinc-500">Escrow locked &amp; verified on Solana PDA / ACID rail.</p>
-              </div>
-            </div>
-
-            {/* Step 2: Work in Progress */}
-            <div className="flex items-start gap-4">
-              <div className="flex flex-col items-center">
-                <div className={`size-8 rounded-full flex items-center justify-center font-mono text-[12px] font-semibold transition-all ${
-                  currentTimelineStep > 2
-                    ? "bg-emerald-500 text-white ring-4 ring-emerald-100"
-                    : currentTimelineStep === 2
-                    ? "bg-blue-600 text-white ring-4 ring-blue-100 animate-pulse"
-                    : "bg-zinc-100 text-zinc-400"
-                }`}>
-                  {currentTimelineStep > 2 ? "✓" : "2"}
-                </div>
-                <div className={`w-0.5 h-10 my-1 ${currentTimelineStep >= 3 ? "bg-emerald-400" : "bg-zinc-200"}`} />
-              </div>
-              <div className="pt-1">
-                <h4 className="text-[15px] font-medium text-zinc-900">Work in Progress</h4>
-                <p className="text-[13px] text-zinc-500">Artisan actively constructing solution and milestones.</p>
-              </div>
-            </div>
-
-            {/* Step 3: Under Review */}
-            <div className="flex items-start gap-4">
-              <div className="flex flex-col items-center">
-                <div className={`size-8 rounded-full flex items-center justify-center font-mono text-[12px] font-semibold transition-all ${
-                  currentTimelineStep > 3
-                    ? "bg-emerald-500 text-white ring-4 ring-emerald-100"
-                    : currentTimelineStep === 3
-                    ? "bg-amber-500 text-white ring-4 ring-amber-100 animate-pulse"
-                    : "bg-zinc-100 text-zinc-400"
-                }`}>
-                  {currentTimelineStep > 3 ? "✓" : "3"}
-                </div>
-                <div className={`w-0.5 h-10 my-1 ${currentTimelineStep >= 4 ? "bg-emerald-400" : "bg-zinc-200"}`} />
-              </div>
-              <div className="pt-1">
-                <h4 className="text-[15px] font-medium text-zinc-900">Under Review</h4>
-                <p className="text-[13px] text-zinc-500">Deliverables submitted and automated test checks running.</p>
-              </div>
-            </div>
-
-            {/* Step 4: Release Payment */}
-            <div className="flex items-start gap-4">
-              <div className="flex flex-col items-center">
-                <div className={`size-8 rounded-full flex items-center justify-center font-mono text-[12px] font-semibold transition-all ${
-                  currentTimelineStep === 4
-                    ? "bg-emerald-600 text-white ring-4 ring-emerald-100"
-                    : "bg-zinc-100 text-zinc-400"
-                }`}>
-                  {currentTimelineStep === 4 ? "✓" : "4"}
-                </div>
-              </div>
-              <div className="pt-1">
-                <h4 className="text-[15px] font-medium text-zinc-900">Release Payment</h4>
-                <p className="text-[13px] text-zinc-500">Automatic settlement released directly to contributor wallet.</p>
-              </div>
-            </div>
+            <h1 className="text-2xl sm:text-3xl font-heading font-semibold text-zinc-950 tracking-tight">
+              {activeTab === "client" ? "Fund Bounty (Client)" : "Find Bounties (Agents)"}
+            </h1>
           </div>
 
-          {/* Right Card: Summary / Selected Bounty Preview */}
-          <div className="lg:col-span-5">
-            {selectedTask ? (
-              <div className="p-6 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-5">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-medium">
-                    Development
-                  </span>
-                  <span className="text-[18px] font-semibold text-zinc-900 font-mono">
-                    {selectedTask.paymentRail === "Web2_Fiat"
-                      ? `${selectedTask.rewardAmountFiat} ${selectedTask.fiatCurrency || "USD"}`
-                      : `${selectedTask.rewardAmountSOL} SOL`}
-                  </span>
-                </div>
+          {/* DUAL MODE SEPARATION BUTTONS */}
+          <div className="flex items-center gap-3">
+            <div className="p-1 rounded-xl bg-zinc-100 border border-zinc-200/80 flex items-center gap-1 text-[12px] font-nav">
+              <button
+                onClick={() => setActiveTab("client")}
+                className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                  activeTab === "client"
+                    ? "bg-white text-zinc-950 font-semibold shadow-xs"
+                    : "text-zinc-500 hover:text-zinc-900 font-normal"
+                }`}
+              >
+                <Briefcase className="size-3.5" />
+                <span>Fund Bounty (Client)</span>
+              </button>
 
+              <button
+                onClick={() => setActiveTab("agent")}
+                className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                  activeTab === "agent"
+                    ? "bg-white text-zinc-950 font-semibold shadow-xs"
+                    : "text-zinc-500 hover:text-zinc-900 font-normal"
+                }`}
+              >
+                <User className="size-3.5" />
+                <span>Find Bounties (Agents)</span>
+              </button>
+            </div>
+
+            <Link
+              href="/dashboard/tasks/new"
+              className="h-9 px-4 rounded-xl bg-[#111111] hover:bg-zinc-800 text-white font-cta text-[12.5px] transition-all flex items-center gap-1.5 shadow-xs"
+            >
+              <Plus className="size-3.5" />
+              <span>+ Fund Bounty</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* ------------------------------------------------------------- */}
+        {/* VIEW 1: FUND BOUNTY (CLIENT DASHBOARD)                        */}
+        {/* ------------------------------------------------------------- */}
+        {activeTab === "client" && (
+          <div className="space-y-8 animate-in fade-in duration-200">
+            
+            {/* Metric Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-2xs">
+                <div className="flex items-center justify-between text-zinc-400 mb-2">
+                  <span className="text-[12px] font-nav font-medium uppercase tracking-wider">Locked Escrow</span>
+                  <Lock className="size-4 text-zinc-600" />
+                </div>
+                <div className="text-2xl font-bold font-stats text-zinc-950">$3,450.00</div>
+                <div className="text-[12px] text-zinc-500 font-body mt-1">Across 3 active bounty vaults</div>
+              </div>
+
+              <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-2xs">
+                <div className="flex items-center justify-between text-zinc-400 mb-2">
+                  <span className="text-[12px] font-nav font-medium uppercase tracking-wider">Active Bounties</span>
+                  <Sparkles className="size-4 text-emerald-600" />
+                </div>
+                <div className="text-2xl font-bold font-stats text-zinc-950">{tasks.length} Live</div>
+                <div className="text-[12px] text-zinc-500 font-body mt-1">Accepting artisan submissions</div>
+              </div>
+
+              <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-2xs">
+                <div className="flex items-center justify-between text-zinc-400 mb-2">
+                  <span className="text-[12px] font-nav font-medium uppercase tracking-wider">Proposals</span>
+                  <FileCheck className="size-4 text-sky-600" />
+                </div>
+                <div className="text-2xl font-bold font-stats text-zinc-950">19 Received</div>
+                <div className="text-[12px] text-zinc-500 font-body mt-1">3 pending review</div>
+              </div>
+
+              <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-2xs">
+                <div className="flex items-center justify-between text-zinc-400 mb-2">
+                  <span className="text-[12px] font-nav font-medium uppercase tracking-wider">Settled & Paid</span>
+                  <TrendingUp className="size-4 text-zinc-800" />
+                </div>
+                <div className="text-2xl font-bold font-stats text-zinc-950">100% On-Time</div>
+                <div className="text-[12px] text-zinc-500 font-body mt-1">0 disputes recorded</div>
+              </div>
+            </div>
+
+            {/* Client's Escrow Bounties Table & Inspector */}
+            <div className="rounded-3xl border border-zinc-200/80 bg-white p-6 sm:p-8 shadow-2xs">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-zinc-100">
                 <div>
-                  <h3 className="text-[17px] font-medium text-zinc-900 line-clamp-1">
-                    {selectedTask.title}
-                  </h3>
-                  <p className="text-[13px] text-zinc-500 line-clamp-2 mt-1">
-                    {selectedTask.description}
+                  <h2 className="text-lg font-heading font-semibold text-zinc-950">
+                    Your Funded Escrows
+                  </h2>
+                  <p className="text-[13px] font-body text-zinc-500 mt-0.5">
+                    Real-time status of locked funds, pending deliverables, and settlement actions.
                   </p>
                 </div>
 
-                {/* Progress bar */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-[12px] font-mono">
-                    <span className="text-zinc-500">Progress</span>
-                    <span className="text-zinc-900 font-semibold">
-                      {selectedTask.status === "Paid"
-                        ? "3/3 milestones (100%)"
-                        : selectedTask.status === "Submitted"
-                        ? "2/3 milestones (66%)"
-                        : "1/3 milestones (33%)"}
-                    </span>
-                  </div>
-                  <div className="w-full h-2 rounded-full bg-zinc-200 overflow-hidden">
-                    <div
-                      className="h-full bg-emerald-500 transition-all duration-500"
-                      style={{
-                        width:
-                          selectedTask.status === "Paid"
-                            ? "100%"
-                            : selectedTask.status === "Submitted"
-                            ? "66%"
-                            : "33%",
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div className="pt-2 flex items-center justify-between text-[12px] font-mono text-zinc-500 border-t border-zinc-200">
-                  <span>Deadline: {selectedTask.deadline}</span>
-                  <span className="text-zinc-700 font-medium">{selectedTask.submissions.length} Submissions</span>
-                </div>
-              </div>
-            ) : (
-              <div className="p-8 rounded-2xl bg-zinc-50 border border-zinc-200 text-center text-zinc-500 text-[13px]">
-                No bounty selected
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* SECTION 2: BOUNTIES DATA TABLE (Matching active and time line of bounties in dashbiard.png) */}
-      <div className="bg-white rounded-2xl border border-zinc-200 p-6 sm:p-8 shadow-xs space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h2 className="text-[20px] font-medium text-zinc-900">Bounties</h2>
-            <p className="text-[13px] text-zinc-500 mt-0.5">Manage and review all your funded escrow covenents.</p>
-          </div>
-
-          {/* Filter / Search Bar */}
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="relative min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-400" />
-              <input
-                type="text"
-                placeholder="Search bounties..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-xl pl-9 pr-3 py-2 text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-400"
-              />
-            </div>
-
-            <select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-              className="bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2 text-[13px] text-zinc-700 focus:outline-none focus:border-zinc-400"
-            >
-              <option value="ALL">All Categories</option>
-              <option value="Development">Development</option>
-              <option value="Design">Design</option>
-              <option value="Security">Security</option>
-            </select>
-
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2 text-[13px] text-zinc-700 focus:outline-none focus:border-zinc-400"
-            >
-              <option value="newest">Sort: Newest</option>
-              <option value="highest">Sort: Highest Budget</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Tabs: Active, Completed, Drafts */}
-        <div className="flex items-center gap-2 border-b border-zinc-200 pb-3">
-          <button
-            onClick={() => setActiveTab("active")}
-            className={`px-4 py-2 rounded-xl text-[13px] font-medium transition-all ${
-              activeTab === "active"
-                ? "bg-zinc-900 text-white shadow-xs"
-                : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100"
-            }`}
-          >
-            Active ({activeCount})
-          </button>
-          <button
-            onClick={() => setActiveTab("completed")}
-            className={`px-4 py-2 rounded-xl text-[13px] font-medium transition-all ${
-              activeTab === "completed"
-                ? "bg-zinc-900 text-white shadow-xs"
-                : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100"
-            }`}
-          >
-            Completed ({completedCount})
-          </button>
-          <button
-            onClick={() => setActiveTab("drafts")}
-            className={`px-4 py-2 rounded-xl text-[13px] font-medium transition-all ${
-              activeTab === "drafts"
-                ? "bg-zinc-900 text-white shadow-xs"
-                : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100"
-            }`}
-          >
-            Drafts (0)
-          </button>
-        </div>
-
-        {/* Table Content */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-zinc-100 text-[11.5px] font-mono text-zinc-400 uppercase tracking-wider">
-                <th className="pb-3 font-semibold">Title</th>
-                <th className="pb-3 font-semibold">Category</th>
-                <th className="pb-3 font-semibold">Budget</th>
-                <th className="pb-3 font-semibold">Applicants / Deliverables</th>
-                <th className="pb-3 font-semibold">Status</th>
-                <th className="pb-3 font-semibold text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100 text-[13.5px]">
-              {filteredTableTasks.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="py-8 text-center text-zinc-400 font-mono">
-                    No bounties found matching the criteria.
-                  </td>
-                </tr>
-              ) : (
-                filteredTableTasks.map((t) => {
-                  const isSelected = selectedTask?.id === t.id;
-                  return (
-                    <tr
-                      key={t.id}
-                      onClick={() => setSelectedTask(t)}
-                      className={`hover:bg-zinc-50/80 cursor-pointer transition-colors ${
-                        isSelected ? "bg-blue-50/40" : ""
-                      }`}
-                    >
-                      <td className="py-4 pr-4">
-                        <div className="font-medium text-zinc-900 line-clamp-1">{t.title}</div>
-                        <div className="text-[11px] font-mono text-zinc-400">{t.id}</div>
-                      </td>
-                      <td className="py-4 pr-4">
-                        <span className="text-[11.5px] font-mono px-2.5 py-0.5 rounded-full bg-zinc-100 text-zinc-700">
-                          {t.title.includes("Solana") || t.title.includes("PostgreSQL") || t.title.includes("Dashboard") ? "Development" : "Security"}
-                        </span>
-                      </td>
-                      <td className="py-4 pr-4 font-mono font-semibold text-zinc-900">
-                        {t.paymentRail === "Web2_Fiat"
-                          ? `${t.rewardAmountFiat} ${t.fiatCurrency || "USD"}`
-                          : `${t.rewardAmountSOL} SOL`}
-                      </td>
-                      <td className="py-4 pr-4 text-zinc-600 font-mono text-[12.5px]">
-                        {t.submissions.length > 0 ? `${t.submissions.length} Submitted` : "1 In Progress"}
-                      </td>
-                      <td className="py-4 pr-4">
-                        <div className="flex items-center gap-1.5">
-                          <span
-                            className={`size-2 rounded-full ${
-                              t.status === "Paid"
-                                ? "bg-emerald-500"
-                                : t.status === "Submitted"
-                                ? "bg-amber-500 animate-ping"
-                                : t.status === "InProgress"
-                                ? "bg-blue-500"
-                                : "bg-emerald-500"
-                            }`}
-                          />
-                          <span
-                            className={`text-[12px] font-mono font-medium ${
-                              t.status === "Paid"
-                                ? "text-emerald-700"
-                                : t.status === "Submitted"
-                                ? "text-amber-700"
-                                : t.status === "InProgress"
-                                ? "text-blue-700"
-                                : "text-emerald-700"
-                            }`}
-                          >
-                            {t.status}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-4 text-right">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedTask(t);
-                          }}
-                          className="px-3 py-1 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-100 text-[12px] font-medium text-zinc-800 transition-colors inline-flex items-center gap-1"
-                        >
-                          <span>Inspect</span>
-                          <ChevronRight className="size-3.5 text-zinc-400" />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* SECTION 3: DETAILED INSPECTOR & SETTLEMENT CONTROLS */}
-      {selectedTask && (
-        <div className="bg-white rounded-2xl border border-zinc-200 p-7 sm:p-8 space-y-8 shadow-xs">
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-6 border-b border-zinc-100">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-[11px] font-mono text-zinc-400">{selectedTask.id}</span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-zinc-200 bg-zinc-50 text-zinc-600 font-medium">
-                  {selectedTask.paymentRail === "Web2_Fiat" ? "Fiat ACID Ledger Rail" : "Solana Devnet Smart Contract"}
-                </span>
-              </div>
-              <h2 className="text-[24px] font-medium text-zinc-900">
-                {selectedTask.title}
-              </h2>
-            </div>
-            <div className="text-left sm:text-right">
-              <span className="text-[11px] text-zinc-400 block font-mono uppercase tracking-wider">Escrow Balance</span>
-              <span className="text-[26px] font-semibold text-zinc-900 font-mono">
-                {selectedTask.paymentRail === "Web2_Fiat"
-                  ? `${selectedTask.rewardAmountFiat} ${selectedTask.fiatCurrency || "USD"}`
-                  : `${selectedTask.rewardAmountSOL} SOL`}
-              </span>
-            </div>
-          </div>
-
-          {/* Requirements & Criteria */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-2.5">
-              <h4 className="text-[11px] font-mono uppercase text-blue-600 font-semibold tracking-widest">
-                Specifications &amp; Scope
-              </h4>
-              <p className="text-[14px] text-zinc-700 leading-relaxed">
-                {selectedTask.description}
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="text-[11px] font-mono uppercase text-blue-600 font-semibold tracking-widest">
-                Acceptance Invariants
-              </h4>
-              <ul className="space-y-2 text-[13.5px] text-zinc-800">
-                {selectedTask.acceptanceCriteria.map((c, i) => (
-                  <li key={i} className="flex items-center gap-2.5">
-                    <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
-                    <span>{c}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {/* Submissions */}
-          <div className="space-y-4 pt-6 border-t border-zinc-100">
-            <h4 className="text-[11px] font-mono uppercase text-blue-600 font-semibold tracking-widest">
-              Submitted Deliverables ({selectedTask.submissions.length})
-            </h4>
-
-            {selectedTask.submissions.length === 0 ? (
-              <div className="p-5 rounded-xl bg-zinc-50 border border-zinc-200 text-[13.5px] text-zinc-500 italic">
-                No deliverables submitted yet. Contributor is actively constructing the milestone.
-              </div>
-            ) : (
-              selectedTask.submissions.map((sub) => (
-                <div
-                  key={sub.id}
-                  className="p-5 rounded-xl bg-white border border-zinc-200 space-y-3 shadow-2xs"
+                <Link
+                  href="/dashboard/tasks/new"
+                  className="h-9 px-4 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white font-cta text-[12.5px] transition-all flex items-center gap-1.5 shadow-xs"
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-[15px] font-medium text-zinc-900">{sub.title}</span>
-                    <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-zinc-100 text-zinc-600">
-                      Revision #{sub.revisionNumber}
-                    </span>
-                  </div>
-                  <p className="text-[13.5px] text-zinc-600 leading-relaxed">{sub.description}</p>
-                  <a
-                    href={sub.evidenceUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 text-[12.5px] text-blue-600 font-mono hover:underline"
+                  <Plus className="size-3.5" />
+                  <span>Create & Fund Bounty</span>
+                </Link>
+              </div>
+
+              {/* Bounties List */}
+              <div className="space-y-4">
+                {tasks.map((task) => (
+                  <div
+                    key={task.id}
+                    className="p-5 rounded-2xl border border-zinc-200/80 bg-zinc-50/40 hover:bg-zinc-50 transition-colors flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
                   >
-                    <span>{sub.evidenceUrl}</span>
-                    <ExternalLink className="size-3.5" />
-                  </a>
-                </div>
-              ))
-            )}
-          </div>
+                    <div className="space-y-1.5 max-w-xl">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-badge font-medium bg-zinc-200 text-zinc-800">
+                          {task.paymentRail === "Web3_Solana" ? "Solana Web3" : "Fiat Web2"}
+                        </span>
+                        <span
+                          className={`px-2.5 py-0.5 rounded-full text-[11px] font-badge font-medium ${
+                            task.status === "Paid"
+                              ? "bg-emerald-100 text-emerald-800"
+                              : task.status === "Cancelled"
+                              ? "bg-red-100 text-red-800"
+                              : "bg-sky-100 text-sky-800"
+                          }`}
+                        >
+                          {task.status}
+                        </span>
+                        {task.escrowPdaAddress && (
+                          <span className="text-[11px] text-zinc-400 font-mono hidden sm:inline">
+                            PDA: {task.escrowPdaAddress.slice(0, 8)}...
+                          </span>
+                        )}
+                      </div>
 
-          {/* Approval Controls */}
-          {selectedTask.status === "Submitted" && (
-            <div className="p-6 rounded-2xl bg-blue-50/50 border border-blue-200 space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-[12px] font-mono uppercase text-zinc-900 block font-semibold tracking-wider">
-                  Authorize Escrow Settlement
-                </span>
-                <span className="text-[11px] font-mono text-emerald-800 bg-emerald-100/80 px-2.5 py-0.5 rounded-full border border-emerald-300">
-                  ACID Guaranteed
-                </span>
-              </div>
-              <input
-                type="text"
-                placeholder="Revision notes (if requesting modifications)..."
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2.5 text-[13.5px] text-zinc-900 focus:outline-none focus:border-blue-500"
-              />
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={() => handleApproveAndRelease(selectedTask)}
-                  disabled={isProcessing}
-                  className="cap-btn-primary flex-1 h-11 text-[13.5px]"
-                >
-                  {isProcessing ? "Releasing Payout..." : (
-                    `Approve & Release ${
-                      selectedTask.paymentRail === "Web2_Fiat"
-                        ? `${selectedTask.rewardAmountFiat} ${selectedTask.fiatCurrency || "USD"}`
-                        : `${selectedTask.rewardAmountSOL} SOL`
-                    }`
-                  )}
-                </button>
-                <button
-                  onClick={() => handleRequestRevision(selectedTask)}
-                  disabled={!feedback.trim() || isProcessing}
-                  className="cap-btn-secondary h-11 px-6 text-[13.5px] disabled:opacity-40"
-                >
-                  Request Revision
-                </button>
-              </div>
-            </div>
-          )}
+                      <h3 className="text-[15px] font-heading font-semibold text-zinc-900">
+                        {task.title}
+                      </h3>
+                      <p className="text-[13px] font-body text-zinc-500 line-clamp-1">
+                        {task.description}
+                      </p>
+                    </div>
 
-          {/* Event Logs & Audit Trail */}
-          <div className="space-y-3 pt-6 border-t border-zinc-100">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase text-zinc-400 tracking-widest block font-semibold">
-                Immutable Audit Log &amp; Event Sequence
-              </span>
-              <span className="text-[10.5px] font-mono text-blue-600 font-semibold">
-                DDIA Event Sourced
-              </span>
-            </div>
-            <div className="space-y-2 font-mono text-[11.5px]">
-              {selectedTask.auditLogs.map((log) => (
-                <div
-                  key={log.id}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-600 gap-1.5"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-zinc-900 font-medium">{log.eventType}</span>
-                    {log.transactionSignature && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-md bg-white text-blue-600 border border-zinc-200">
-                        ref: {log.transactionSignature.slice(0, 10)}...
-                      </span>
-                    )}
+                    <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
+                      <div className="text-right">
+                        <div className="text-[15px] font-bold font-stats text-zinc-950">
+                          {task.paymentRail === "Web3_Solana"
+                            ? `${task.rewardAmountSOL} SOL`
+                            : `$${task.rewardAmountFiat} ${task.fiatCurrency || "USD"}`}
+                        </div>
+                        <div className="text-[11px] text-emerald-600 font-medium flex items-center justify-end gap-1">
+                          <Lock className="size-3" /> Locked in Escrow
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {task.status !== "Paid" && task.status !== "Cancelled" && (
+                          <>
+                            <button
+                              onClick={() => handleReleaseEscrow(task)}
+                              className="h-8 px-3.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-cta text-[12px] transition-colors flex items-center gap-1 shadow-2xs cursor-pointer"
+                            >
+                              <Check className="size-3.5" />
+                              <span>Release Funds</span>
+                            </button>
+                            <button
+                              onClick={() => handleCancelEscrow(task)}
+                              className="h-8 px-3 rounded-lg border border-zinc-200 text-zinc-600 hover:bg-red-50 hover:text-red-700 font-cta text-[12px] transition-colors cursor-pointer"
+                            >
+                              Refund
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 text-[11px] text-zinc-400">
-                    <span>actor: {log.actorId.slice(0, 8)}...</span>
-                    <span>•</span>
-                    <span>{new Date(log.createdAt).toLocaleTimeString()}</span>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        )}
+
+        {/* ------------------------------------------------------------- */}
+        {/* VIEW 2: FIND BOUNTIES (AGENTS HUB) MATCHING ui/image.png     */}
+        {/* ------------------------------------------------------------- */}
+        {activeTab === "agent" && (
+          <div className="space-y-8 animate-in fade-in duration-200">
+            
+            {/* SEARCH & FILTERS BAR matching ui/image.png */}
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              
+              {/* Search Input matching ui/image.png */}
+              <div className="relative w-full md:w-[480px]">
+                <Search className="size-4 text-zinc-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search bounties..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full h-11 pl-11 pr-4 rounded-2xl border border-zinc-200/90 bg-white text-[13.5px] font-body text-zinc-900 focus:outline-hidden focus:border-zinc-400 transition-colors placeholder:text-zinc-400 shadow-2xs"
+                />
+              </div>
+
+              {/* Three Dropdown Selectors matching ui/image.png */}
+              <div className="flex items-center gap-3 w-full md:w-auto justify-end">
+                
+                {/* Category Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setOpenDropdown(openDropdown === "category" ? null : "category")}
+                    className="h-11 px-4 rounded-2xl border border-zinc-200/90 bg-white text-[13px] font-nav font-medium text-zinc-800 flex items-center gap-2 shadow-2xs hover:bg-zinc-50 transition-colors cursor-pointer"
+                  >
+                    <span>{selectedCategory}</span>
+                    <ChevronDown className="size-3.5 text-zinc-500" />
+                  </button>
+
+                  {openDropdown === "category" && (
+                    <div className="absolute right-0 mt-2 w-48 rounded-2xl border border-zinc-200 bg-white py-1.5 shadow-lg z-30 font-nav text-[13px]">
+                      {["All Categories", "Development", "Design", "Security", "Marketing", "Research"].map((cat) => (
+                        <button
+                          key={cat}
+                          onClick={() => {
+                            setSelectedCategory(cat);
+                            setOpenDropdown(null);
+                          }}
+                          className={`w-full text-left px-4 py-2 hover:bg-zinc-50 transition-colors flex items-center justify-between ${
+                            selectedCategory === cat ? "font-semibold text-zinc-950 bg-zinc-50" : "text-zinc-600"
+                          }`}
+                        >
+                          <span>{cat}</span>
+                          {selectedCategory === cat && <CheckCircle2 className="size-3.5 text-zinc-900" />}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Budget Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setOpenDropdown(openDropdown === "budget" ? null : "budget")}
+                    className="h-11 px-4 rounded-2xl border border-zinc-200/90 bg-white text-[13px] font-nav font-medium text-zinc-800 flex items-center gap-2 shadow-2xs hover:bg-zinc-50 transition-colors cursor-pointer"
+                  >
+                    <span>{selectedBudget}</span>
+                    <ChevronDown className="size-3.5 text-zinc-500" />
+                  </button>
+
+                  {openDropdown === "budget" && (
+                    <div className="absolute right-0 mt-2 w-44 rounded-2xl border border-zinc-200 bg-white py-1.5 shadow-lg z-30 font-nav text-[13px]">
+                      {["Budget", "Under $250", "$250 - $500", "$500 - $1,000", "$1,000+"].map((b) => (
+                        <button
+                          key={b}
+                          onClick={() => {
+                            setSelectedBudget(b);
+                            setOpenDropdown(null);
+                          }}
+                          className={`w-full text-left px-4 py-2 hover:bg-zinc-50 transition-colors flex items-center justify-between ${
+                            selectedBudget === b ? "font-semibold text-zinc-950 bg-zinc-50" : "text-zinc-600"
+                          }`}
+                        >
+                          <span>{b}</span>
+                          {selectedBudget === b && <CheckCircle2 className="size-3.5 text-zinc-900" />}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Sort Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setOpenDropdown(openDropdown === "sort" ? null : "sort")}
+                    className="h-11 px-4 rounded-2xl border border-zinc-200/90 bg-white text-[13px] font-nav font-medium text-zinc-800 flex items-center gap-2 shadow-2xs hover:bg-zinc-50 transition-colors cursor-pointer"
+                  >
+                    <span>{selectedSort}</span>
+                    <ChevronDown className="size-3.5 text-zinc-500" />
+                  </button>
+
+                  {openDropdown === "sort" && (
+                    <div className="absolute right-0 mt-2 w-44 rounded-2xl border border-zinc-200 bg-white py-1.5 shadow-lg z-30 font-nav text-[13px]">
+                      {["Latest", "Oldest", "Highest Budget", "Most Proposals"].map((s) => (
+                        <button
+                          key={s}
+                          onClick={() => {
+                            setSelectedSort(s);
+                            setOpenDropdown(null);
+                          }}
+                          className={`w-full text-left px-4 py-2 hover:bg-zinc-50 transition-colors flex items-center justify-between ${
+                            selectedSort === s ? "font-semibold text-zinc-950 bg-zinc-50" : "text-zinc-600"
+                          }`}
+                        >
+                          <span>{s}</span>
+                          {selectedSort === s && <CheckCircle2 className="size-3.5 text-zinc-900" />}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+              </div>
+            </div>
+
+            {/* 3-COLUMN BOUNTY GRID matching ui/image.png */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {agentBounties.map((bounty) => (
+                <div
+                  key={bounty.id}
+                  onClick={() => {
+                    setSelectedBounty(bounty);
+                    setShowApplyModal(true);
+                  }}
+                  className="group rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-2xs hover:border-zinc-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between cursor-pointer min-h-[190px]"
+                >
+                  <div>
+                    {/* Top Row: Category Badge (left) & Budget Range (right) */}
+                    <div className="flex items-center justify-between mb-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-[12px] font-badge font-medium ${bounty.categoryBadgeClass}`}
+                      >
+                        {bounty.category}
+                      </span>
+                      <span className="text-[15px] font-bold text-zinc-900 tracking-tight font-stats">
+                        {bounty.budgetRange}
+                      </span>
+                    </div>
+
+                    {/* Middle: Title & Subtitle */}
+                    <h3 className="text-[15.5px] font-heading font-semibold text-zinc-900 group-hover:text-zinc-600 transition-colors line-clamp-1">
+                      {bounty.title}
+                    </h3>
+                    <p className="text-[13px] font-body text-zinc-400 mt-1">
+                      {bounty.subtitle}
+                    </p>
+                  </div>
+
+                  {/* Bottom Row: Proposals count & time ago */}
+                  <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-[12.5px] text-zinc-400 font-medium font-body">
+                    <span className="flex items-center gap-1.5 text-zinc-500">
+                      <span className="text-zinc-400">🍃</span>
+                      <span>{bounty.proposalsCount} proposals</span>
+                    </span>
+                    <span>{bounty.timeAgo}</span>
                   </div>
                 </div>
               ))}
             </div>
+
+          </div>
+        )}
+
+      </div>
+
+      {/* PROPOSAL APPLICATION MODAL FOR AGENTS */}
+      {showApplyModal && selectedBounty && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl border border-zinc-200 max-w-lg w-full p-6 sm:p-8 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+            <button
+              onClick={() => setShowApplyModal(false)}
+              className="absolute top-6 right-6 p-2 rounded-xl text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-colors"
+            >
+              <X className="size-4" />
+            </button>
+
+            <div className="flex items-center gap-2 mb-3">
+              <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-badge font-medium ${selectedBounty.categoryBadgeClass}`}>
+                {selectedBounty.category}
+              </span>
+              <span className="text-[12px] text-zinc-400">•</span>
+              <span className="text-[12px] font-medium text-emerald-600 flex items-center gap-1 font-body">
+                <Lock className="size-3" /> Escrow Locked & Verified
+              </span>
+            </div>
+
+            <h2 className="text-xl font-heading font-semibold text-zinc-950 mb-1">
+              {selectedBounty.title}
+            </h2>
+            <p className="text-[13px] font-body text-zinc-500 mb-5">
+              Budget: <span className="font-bold text-zinc-900">{selectedBounty.budgetRange}</span> • {selectedBounty.subtitle}
+            </p>
+
+            {selectedBounty.description && (
+              <div className="mb-5 p-4 rounded-2xl bg-zinc-50 border border-zinc-200/70 text-[13px] text-zinc-700 font-body leading-relaxed">
+                {selectedBounty.description}
+              </div>
+            )}
+
+            <form onSubmit={handleApply} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[12px] font-heading font-medium text-zinc-700 mb-1">
+                    Your Bid Amount ($ or SOL)
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. $450"
+                    value={bidAmount}
+                    onChange={(e) => setBidAmount(e.target.value)}
+                    className="w-full h-10 px-3.5 rounded-xl border border-zinc-200 bg-white text-[13px] font-body text-zinc-900 focus:outline-hidden focus:border-zinc-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[12px] font-heading font-medium text-zinc-700 mb-1">
+                    Estimated Delivery Time
+                  </label>
+                  <select
+                    value={deliveryDays}
+                    onChange={(e) => setDeliveryDays(e.target.value)}
+                    className="w-full h-10 px-3.5 rounded-xl border border-zinc-200 bg-white text-[13px] font-body text-zinc-900 focus:outline-hidden focus:border-zinc-400"
+                  >
+                    <option value="3 Days">3 Days</option>
+                    <option value="5 Days">5 Days</option>
+                    <option value="7 Days">7 Days</option>
+                    <option value="14 Days">14 Days</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[12px] font-heading font-medium text-zinc-700 mb-1">
+                  Cover Note / Proposed Deliverables
+                </label>
+                <textarea
+                  rows={3}
+                  required
+                  placeholder="Outline your approach, tech stack, and relevant experience..."
+                  value={coverLetter}
+                  onChange={(e) => setCoverLetter(e.target.value)}
+                  className="w-full p-3.5 rounded-xl border border-zinc-200 bg-white text-[13px] font-body text-zinc-900 focus:outline-hidden focus:border-zinc-400 resize-none"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowApplyModal(false)}
+                  className="h-10 px-4 rounded-xl border border-zinc-200 text-zinc-600 font-cta text-[13px] hover:bg-zinc-50 transition-colors"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={appliedSuccess}
+                  className="h-10 px-5 rounded-xl bg-zinc-950 text-white font-cta text-[13px] hover:bg-zinc-800 transition-colors flex items-center gap-2 shadow-xs disabled:opacity-50"
+                >
+                  {appliedSuccess ? (
+                    <>
+                      <CheckCircle2 className="size-4 text-emerald-400" />
+                      <span>Submitting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="size-3.5" />
+                      <span>Submit Proposal</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
+
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#FCFCFB] flex items-center justify-center text-zinc-400 font-body text-sm">Loading dashboard...</div>}>
+      <DashboardContent />
+    </Suspense>
   );
 }

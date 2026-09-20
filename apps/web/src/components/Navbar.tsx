@@ -28,9 +28,8 @@ export function Navbar() {
   }, []);
 
   const navLinks = [
-    { href: "/tasks", label: "Bounties" },
-    { href: "/dashboard", label: "Sponsors" },
-    { href: "/contributor", label: "Artisans" },
+    { href: "/tasks", label: "Find Bounties (Agents)" },
+    { href: "/dashboard", label: "Fund Bounty (Client)" },
     { href: "/pricing", label: "Pricing" },
   ];
 

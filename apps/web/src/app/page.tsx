@@ -979,22 +979,6 @@ export default function HomePage() {
 
         </div>
 
-        {/* Bottom Brand Manifesto Bar */}
-        <div className="mt-12 pt-8 border-t border-zinc-200/60 flex flex-col sm:flex-row sm:items-end justify-between gap-4 relative z-10">
-          <div className="space-y-1.5">
-            <div className="w-8 h-[1px] bg-zinc-300 mb-2" />
-            <div className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-zinc-400 leading-relaxed">
-              <div>MORE OPPORTUNITIES.</div>
-              <div>FAIRER PAYMENTS.</div>
-              <div>A STRONGER INDEPENDENT ECONOMY.</div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-zinc-400">
-            <div className="w-8 h-[1px] bg-zinc-300" />
-            <span>VAULT</span>
-          </div>
-        </div>
       </section>
 
       {/* 6. FAQS SECTION (Placed before footer) */}

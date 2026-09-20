@@ -2,612 +2,573 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { EscrowTask, TaskStatus } from "@vault/shared";
+import { EscrowTask } from "@vault/shared";
 import { getTasks } from "@/lib/store";
 import {
   Search,
-  ArrowUpRight,
-  Plus,
-  Filter,
-  CheckCircle2,
-  Coins,
-  CreditCard,
-  Layers,
-  Code2,
-  Palette,
-  Megaphone,
-  FlaskConical,
-  Shield,
-  SlidersHorizontal,
-  Clock,
-  Check,
-  ChevronRight,
-  ExternalLink,
-  X,
-  MessageSquare,
+  ChevronDown,
   Sparkles,
-  Tag,
-  GitPullRequest,
-  CheckCircle,
-  HelpCircle,
-  TrendingUp,
+  CheckCircle2,
+  X,
+  Send,
+  Lock,
+  ArrowRight,
+  Briefcase,
+  User,
+  Plus,
 } from "lucide-react";
 
-export default function TasksPage() {
-  const [tasks, setTasks] = useState<EscrowTask[]>([]);
-  const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
-  const [selectedStatuses, setSelectedStatuses] = useState<string[]>(["Open", "InProgress"]);
-  const [budgetRange, setBudgetRange] = useState<string>("ALL");
-  const [sortBy, setSortBy] = useState<"newest" | "reward" | "deadline">("newest");
-  const [inspectedTask, setInspectedTask] = useState<EscrowTask | null>(null);
-  const [activeDrawerTab, setActiveDrawerTab] = useState<"overview" | "milestones" | "requirements" | "discussion" | "updates">("overview");
+interface BountyItem {
+  id: string;
+  category: "Development" | "Design" | "Security" | "Marketing" | "Research" | "Other";
+  categoryBadgeClass: string;
+  budgetRange: string;
+  minBudget: number;
+  maxBudget: number;
+  title: string;
+  subtitle: string;
+  proposalsCount: number;
+  timeAgo: string;
+  createdAtDaysAgo: number;
+  description?: string;
+  requirements?: string[];
+}
+
+const INITIAL_IMAGE_BOUNTIES: BountyItem[] = [
+  {
+    id: "img-bounty-01",
+    category: "Development",
+    categoryBadgeClass: "bg-[#e0f2fe] text-[#0284c7]",
+    budgetRange: "$300 - $500",
+    minBudget: 300,
+    maxBudget: 500,
+    title: "Build a portfolio website",
+    subtitle: "Web Development",
+    proposalsCount: 12,
+    timeAgo: "2d ago",
+    createdAtDaysAgo: 2,
+    description: "Develop a bespoke modern portfolio website with smooth transitions, responsive grid layout, and dark/light mode toggle. Next.js and Tailwind CSS preferred.",
+    requirements: ["Clean modular Next.js 15 structure", "Responsive across mobile and desktop", "95+ Google PageSpeed score"],
+  },
+  {
+    id: "img-bounty-02",
+    category: "Design",
+    categoryBadgeClass: "bg-[#fef3c7] text-[#d97706]",
+    budgetRange: "$800 - $1,200",
+    minBudget: 800,
+    maxBudget: 1200,
+    title: "Brand identity package",
+    subtitle: "Branding",
+    proposalsCount: 8,
+    timeAgo: "1d ago",
+    createdAtDaysAgo: 1,
+    description: "Craft a comprehensive brand identity system including logo design, color typography guidelines, 3D asset concepts, and social media media kit.",
+    requirements: ["Vector logo files (SVG, AI, PDF)", "Comprehensive Figma brand system", "Social media templates & icon set"],
+  },
+  {
+    id: "img-bounty-03",
+    category: "Security",
+    categoryBadgeClass: "bg-[#dcfce7] text-[#16a34a]",
+    budgetRange: "$250 - $500",
+    minBudget: 250,
+    maxBudget: 500,
+    title: "Smart contract audit",
+    subtitle: "Security",
+    proposalsCount: 6,
+    timeAgo: "3d ago",
+    createdAtDaysAgo: 3,
+    description: "Audit custom Solana Anchor program escrow logic, test PDA rent-exemption checks, and ensure rigorous reentrancy and signature authorization guards.",
+    requirements: ["Comprehensive vulnerability report with severity matrix", "Fuzz testing reproduction scripts", "Actionable patch recommendations"],
+  },
+  {
+    id: "img-bounty-04",
+    category: "Marketing",
+    categoryBadgeClass: "bg-[#fae8ff] text-[#a855f7]",
+    budgetRange: "$100 - $300",
+    minBudget: 100,
+    maxBudget: 300,
+    title: "Community growth",
+    subtitle: "Marketing",
+    proposalsCount: 4,
+    timeAgo: "2d ago",
+    createdAtDaysAgo: 2,
+    description: "Execute organic developer outreach campaigns across Twitter/X and Discord to drive initial traction for a decentralized bounty protocol.",
+    requirements: ["Weekly engagement metrics report", "Engage 500+ active developer members", "Coordinated community AMA schedule"],
+  },
+  {
+    id: "img-bounty-05",
+    category: "Research",
+    categoryBadgeClass: "bg-[#e0e7ff] text-[#4f46e5]",
+    budgetRange: "$200 - $400",
+    minBudget: 200,
+    maxBudget: 400,
+    title: "Market analysis",
+    subtitle: "Research",
+    proposalsCount: 3,
+    timeAgo: "4d ago",
+    createdAtDaysAgo: 4,
+    description: "Produce a detailed comparative analysis of Web3 escrow protocols vs Web2 freelance escrow platforms with fees and volume breakdowns.",
+    requirements: ["10-page formatted PDF report with charts", "Data sources cited", "Competitor matrix covering 8 platforms"],
+  },
+  {
+    id: "img-bounty-06",
+    category: "Development",
+    categoryBadgeClass: "bg-[#e0f2fe] text-[#0284c7]",
+    budgetRange: "$500 - $1,000",
+    minBudget: 500,
+    maxBudget: 1000,
+    title: "Solana program development",
+    subtitle: "Blockchain",
+    proposalsCount: 7,
+    timeAgo: "5d ago",
+    createdAtDaysAgo: 5,
+    description: "Implement custom Anchor escrow smart contracts supporting partial milestone releases and multi-signature authorization on Solana devnet/mainnet.",
+    requirements: ["Rust / Anchor framework", "100% test coverage with Mocha/Bankrun", "Audited PDA seed derivation"],
+  },
+];
+
+export default function FindBountiesPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [selectedBudget, setSelectedBudget] = useState("Budget");
+  const [selectedSort, setSelectedSort] = useState("Latest");
+
+  // Dropdown menus toggle state
+  const [openDropdown, setOpenDropdown] = useState<"category" | "budget" | "sort" | null>(null);
+
+  // Proposal modal state
+  const [selectedBounty, setSelectedBounty] = useState<BountyItem | null>(null);
+  const [showApplyModal, setShowApplyModal] = useState(false);
+  const [bidAmount, setBidAmount] = useState("");
+  const [deliveryDays, setDeliveryDays] = useState("5 Days");
+  const [coverLetter, setCoverLetter] = useState("");
+  const [appliedSuccess, setAppliedSuccess] = useState(false);
+  const [actionToast, setActionToast] = useState<string | null>(null);
+
+  // Dynamic user bounties from store
+  const [allBounties, setAllBounties] = useState<BountyItem[]>(INITIAL_IMAGE_BOUNTIES);
 
   useEffect(() => {
-    const list = getTasks();
-    setTasks(list);
-    if (list.length > 0) {
-      // Don't auto-open modal on load, but keep inspected ready
+    const customTasks: EscrowTask[] = getTasks();
+    if (customTasks && customTasks.length > 0) {
+      const converted: BountyItem[] = customTasks.map((t, idx) => {
+        const isSol = t.paymentRail === "Web3_Solana";
+        const budgetStr = isSol
+          ? `${t.rewardAmountSOL ?? 0.5} SOL (~$${Math.round((t.rewardAmountSOL ?? 0.5) * 145)})`
+          : `$${t.rewardAmountFiat ?? 500}`;
+        const minVal = isSol ? (t.rewardAmountSOL ?? 0.5) * 145 : (t.rewardAmountFiat ?? 500);
+
+        return {
+          id: t.id || `custom-${idx}`,
+          category: "Development",
+          categoryBadgeClass: "bg-[#e0f2fe] text-[#0284c7]",
+          budgetRange: budgetStr,
+          minBudget: minVal,
+          maxBudget: minVal,
+          title: t.title,
+          subtitle: isSol ? "Solana Escrow" : "Fiat Escrow",
+          proposalsCount: t.submissions?.length || 2,
+          timeAgo: "Just now",
+          createdAtDaysAgo: 0,
+          description: t.description,
+          requirements: t.acceptanceCriteria,
+        };
+      });
+
+      // Avoid duplicates
+      const uniqueNew = converted.filter(
+        (c) => !INITIAL_IMAGE_BOUNTIES.some((init) => init.title.toLowerCase() === c.title.toLowerCase())
+      );
+      setAllBounties([...uniqueNew, ...INITIAL_IMAGE_BOUNTIES]);
     }
   }, []);
 
-  const categories = [
-    { id: "ALL", label: "All Bounties", icon: Layers, count: tasks.length },
-    { id: "Development", label: "Development", icon: Code2, count: tasks.filter(t => t.title.includes("Solana") || t.title.includes("PostgreSQL") || t.title.includes("API") || t.title.includes("Engine") || t.title.includes("Dashboard")).length },
-    { id: "Design", label: "Design", icon: Palette, count: tasks.filter(t => t.title.includes("Design") || t.title.includes("UI")).length || 2 },
-    { id: "Marketing", label: "Marketing", icon: Megaphone, count: 1 },
-    { id: "Research", label: "Research", icon: FlaskConical, count: 2 },
-    { id: "Security", label: "Security", icon: Shield, count: tasks.filter(t => t.title.includes("Security") || t.title.includes("Audit")).length || 1 },
-  ];
-
-  const handleStatusToggle = (status: string) => {
-    if (selectedStatuses.includes(status)) {
-      setSelectedStatuses(selectedStatuses.filter((s) => s !== status));
-    } else {
-      setSelectedStatuses([...selectedStatuses, status]);
-    }
+  const handleApply = (e: React.FormEvent) => {
+    e.preventDefault();
+    setAppliedSuccess(true);
+    setTimeout(() => {
+      setAppliedSuccess(false);
+      setShowApplyModal(false);
+      setCoverLetter("");
+      setBidAmount("");
+      setActionToast(`✓ Proposal for "${selectedBounty?.title}" submitted successfully!`);
+      setTimeout(() => setActionToast(null), 4000);
+    }, 1200);
   };
 
-  const filteredTasks = tasks
-    .filter((t) => {
-      const matchesSearch =
-        t.title.toLowerCase().includes(search.toLowerCase()) ||
-        t.description.toLowerCase().includes(search.toLowerCase()) ||
-        t.id.toLowerCase().includes(search.toLowerCase());
+  // Filter and sort bounties
+  const filteredBounties = allBounties
+    .filter((item) => {
+      // Category filter
+      if (selectedCategory !== "All Categories" && item.category !== selectedCategory) {
+        return false;
+      }
+      // Budget filter
+      if (selectedBudget === "Under $250" && item.minBudget >= 250) return false;
+      if (selectedBudget === "$250 - $500" && (item.maxBudget < 250 || item.minBudget > 500)) return false;
+      if (selectedBudget === "$500 - $1,000" && (item.maxBudget < 500 || item.minBudget > 1000)) return false;
+      if (selectedBudget === "$1,000+" && item.maxBudget < 1000) return false;
 
-      // Map task status to filter keys
-      const statusKey = t.status === "Funded" ? "Open" : t.status === "InProgress" ? "InProgress" : t.status === "Paid" ? "Completed" : "Open";
-      const matchesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(statusKey);
-
-      const matchesCategory =
-        selectedCategory === "ALL" ||
-        (selectedCategory === "Development" && (t.title.includes("Solana") || t.title.includes("PostgreSQL") || t.title.includes("API") || t.title.includes("Engine") || t.title.includes("Dashboard"))) ||
-        (selectedCategory === "Security" && (t.title.includes("Security") || t.title.includes("Audit"))) ||
-        (selectedCategory === "Design" && (t.title.includes("Design") || t.title.includes("UI"))) ||
-        (selectedCategory === "Research" && t.title.includes("Research")) ||
-        (selectedCategory === "Marketing" && t.title.includes("Marketing"));
-
-      const numReward = t.paymentRail === "Web2_Fiat" ? t.rewardAmountFiat || 0 : (t.rewardAmountSOL || 0) * 150;
-      let matchesBudget = true;
-      if (budgetRange === "under1k") matchesBudget = numReward < 1000;
-      if (budgetRange === "1kto5k") matchesBudget = numReward >= 1000 && numReward <= 5000;
-      if (budgetRange === "over5k") matchesBudget = numReward > 5000;
-
-      return matchesSearch && matchesStatus && matchesCategory && matchesBudget;
+      // Search query
+      if (searchQuery.trim() !== "") {
+        const q = searchQuery.toLowerCase();
+        return (
+          item.title.toLowerCase().includes(q) ||
+          item.subtitle.toLowerCase().includes(q) ||
+          item.category.toLowerCase().includes(q)
+        );
+      }
+      return true;
     })
     .sort((a, b) => {
-      if (sortBy === "reward") {
-        const aVal = a.paymentRail === "Web2_Fiat" ? a.rewardAmountFiat || 0 : (a.rewardAmountSOL || 0) * 150;
-        const bVal = b.paymentRail === "Web2_Fiat" ? b.rewardAmountFiat || 0 : (b.rewardAmountSOL || 0) * 150;
-        return bVal - aVal;
-      }
+      if (selectedSort === "Latest") return a.createdAtDaysAgo - b.createdAtDaysAgo;
+      if (selectedSort === "Oldest") return b.createdAtDaysAgo - a.createdAtDaysAgo;
+      if (selectedSort === "Highest Budget") return b.maxBudget - a.maxBudget;
+      if (selectedSort === "Most Proposals") return b.proposalsCount - a.proposalsCount;
       return 0;
     });
 
-  const getSkillsForTask = (task: EscrowTask): string[] => {
-    if (task.title.includes("Solana")) return ["Solana", "Rust", "Anchor", "TypeScript", "WebSockets"];
-    if (task.title.includes("PostgreSQL")) return ["PostgreSQL", "DDIA", "SQL", "ACID", "TypeScript"];
-    if (task.title.includes("Security")) return ["Smart Contracts", "Audit", "Fuzzing", "Rust"];
-    return ["React", "TypeScript", "TailwindCSS", "Next.js", "Web3"];
-  };
-
   return (
-    <div className="max-w-[1364px] mx-auto px-6 sm:px-10 py-10 space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-6 border-b border-zinc-200">
-        <div>
-          <span className="text-[11px] font-mono uppercase tracking-widest text-blue-600 font-semibold">
-            EXPLORE BOUNTIES
-          </span>
-          <h1 className="text-[32px] sm:text-[40px] font-normal text-zinc-900 tracking-tight mt-1">
-            Curated Bounties
-          </h1>
-          <p className="text-[15px] text-zinc-500 mt-1">
-            Discover and contribute to bounties from top protocols and teams across the ecosystem.
-          </p>
+    <div className="w-full min-h-screen bg-[#FCFCFB] text-zinc-900 pt-20 pb-28">
+      
+      {/* Toast */}
+      {actionToast && (
+        <div className="fixed bottom-8 right-8 z-50 p-4 rounded-2xl bg-zinc-950 text-white text-[13.5px] font-medium flex items-center gap-3 shadow-xl animate-in fade-in slide-in-from-bottom-3 duration-300">
+          <CheckCircle2 className="size-4 text-emerald-400" />
+          <span>{actionToast}</span>
         </div>
+      )}
 
-        <div className="flex items-center gap-3">
-          <Link
-            href="/dashboard/tasks/new"
-            className="cap-btn-primary h-10 px-5 text-[13.5px] flex items-center gap-2"
-          >
-            <Plus className="size-4" />
-            <span>Fund Bounty</span>
-          </Link>
-        </div>
-      </div>
-
-      {/* Main 2-Column Marketplace (Matching bounties.png) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="max-w-[1364px] mx-auto px-6 sm:px-10">
         
-        {/* Left Sidebar Filter Panel (Matching bounties.png) */}
-        <div className="lg:col-span-3 space-y-6">
-          <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-xs space-y-6">
-            
-            {/* Search */}
-            <div className="space-y-2">
-              <label className="text-[11px] font-mono uppercase tracking-wider text-zinc-400 font-semibold">
-                Search
-              </label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-400" />
-                <input
-                  type="text"
-                  placeholder="Keywords..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl pl-9 pr-3 py-2 text-[13px] text-zinc-900 focus:outline-none focus:border-zinc-400"
-                />
-              </div>
+        {/* Navigation & Mode Toggle */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 pt-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[11px] font-badge uppercase tracking-widest text-zinc-400 font-semibold">
+                AGENTS & ARTISANS HUB
+              </span>
             </div>
-
-            {/* Categories */}
-            <div className="space-y-2">
-              <label className="text-[11px] font-mono uppercase tracking-wider text-zinc-400 font-semibold">
-                Categories
-              </label>
-              <div className="space-y-1">
-                {categories.map((c) => {
-                  const Icon = c.icon;
-                  const isSelected = selectedCategory === c.id;
-                  return (
-                    <button
-                      key={c.id}
-                      onClick={() => setSelectedCategory(c.id)}
-                      className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-[13px] font-medium transition-all ${
-                        isSelected
-                          ? "bg-zinc-900 text-white shadow-xs"
-                          : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <Icon className="size-4" />
-                        <span>{c.label}</span>
-                      </div>
-                      <span className={`text-[11px] font-mono ${isSelected ? "text-zinc-300" : "text-zinc-400"}`}>
-                        {c.count}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Status Checkboxes */}
-            <div className="space-y-2 pt-4 border-t border-zinc-100">
-              <label className="text-[11px] font-mono uppercase tracking-wider text-zinc-400 font-semibold">
-                Status
-              </label>
-              <div className="space-y-2">
-                {[
-                  { id: "Open", label: "Open" },
-                  { id: "InProgress", label: "In Progress" },
-                  { id: "Completed", label: "Completed" },
-                ].map((s) => (
-                  <label
-                    key={s.id}
-                    className="flex items-center gap-2.5 text-[13px] text-zinc-700 cursor-pointer select-none"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedStatuses.includes(s.id)}
-                      onChange={() => handleStatusToggle(s.id)}
-                      className="size-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span>{s.label}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Budget Range Radio */}
-            <div className="space-y-2 pt-4 border-t border-zinc-100">
-              <label className="text-[11px] font-mono uppercase tracking-wider text-zinc-400 font-semibold">
-                Budget Range
-              </label>
-              <div className="space-y-2">
-                {[
-                  { id: "ALL", label: "All Budgets" },
-                  { id: "under1k", label: "< $1,000" },
-                  { id: "1kto5k", label: "$1,000 - $5,000" },
-                  { id: "over5k", label: "$5,000+" },
-                ].map((b) => (
-                  <label
-                    key={b.id}
-                    className="flex items-center gap-2.5 text-[13px] text-zinc-700 cursor-pointer select-none"
-                  >
-                    <input
-                      type="radio"
-                      name="budget"
-                      checked={budgetRange === b.id}
-                      onChange={() => setBudgetRange(b.id)}
-                      className="size-4 border-zinc-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span>{b.label}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Sort Dropdown */}
-            <div className="space-y-2 pt-4 border-t border-zinc-100">
-              <label className="text-[11px] font-mono uppercase tracking-wider text-zinc-400 font-semibold">
-                Sort By
-              </label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2 text-[13px] text-zinc-700 focus:outline-none focus:border-zinc-400"
-              >
-                <option value="newest">Newest First</option>
-                <option value="reward">Highest Reward</option>
-                <option value="deadline">Ending Soon</option>
-              </select>
-            </div>
-
-          </div>
-        </div>
-
-        {/* Right Cards Grid (Matching bounties.png) */}
-        <div className="lg:col-span-9 space-y-4">
-          <div className="flex items-center justify-between px-1 text-[12px] font-mono text-zinc-500">
-            <span>Showing <strong className="text-zinc-900">{filteredTasks.length}</strong> available bounties</span>
-            <span>Escrow Protected</span>
+            <h1 className="text-2xl sm:text-3xl font-heading font-semibold text-zinc-950 tracking-tight">
+              Find Bounties
+            </h1>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredTasks.length === 0 ? (
-              <div className="md:col-span-2 p-12 bg-white rounded-2xl border border-zinc-200 text-center text-zinc-500 font-mono text-[14px]">
-                No bounties match the selected filters. Try adjusting your search.
-              </div>
-            ) : (
-              filteredTasks.map((task) => {
-                const skills = getSkillsForTask(task);
-                const categoryName = task.title.includes("Security") ? "Security" : task.title.includes("Design") ? "Design" : "Development";
-                
-                return (
-                  <div
-                    key={task.id}
-                    className="bg-white rounded-2xl border border-zinc-200 p-6 flex flex-col justify-between hover:border-zinc-300 hover:shadow-md transition-all group"
-                  >
-                    <div className="space-y-4">
-                      {/* Card Header: Category & Reward & Milestones */}
-                      <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-zinc-100 text-zinc-700 font-medium">
-                          {categoryName}
-                        </span>
-
-                        <div className="text-right">
-                          <span className="text-[18px] font-mono font-bold text-zinc-900">
-                            {task.paymentRail === "Web2_Fiat"
-                              ? `${task.rewardAmountFiat} ${task.fiatCurrency || "USD"}`
-                              : `${task.rewardAmountSOL} SOL`}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Milestone Progress Indicator */}
-                      <div className="flex items-center justify-between text-[11.5px] font-mono text-zinc-400">
-                        <span>Milestones: {task.status === "Paid" ? "3/3" : task.status === "Submitted" ? "2/3" : "1/3"}</span>
-                        <span className="text-emerald-600 font-medium">
-                          {task.paymentRail === "Web2_Fiat" ? "Fiat ACID" : "Solana PDA"}
-                        </span>
-                      </div>
-
-                      {/* Title & Author */}
-                      <div>
-                        <h3 className="text-[16px] font-semibold text-zinc-900 group-hover:text-blue-600 transition-colors line-clamp-1">
-                          {task.title}
-                        </h3>
-                        <div className="flex items-center gap-2 mt-1 text-[12px] text-zinc-400 font-mono">
-                          <span>by {task.sponsorId ? task.sponsorId.slice(0, 10) : "vault_core"}</span>
-                          <span>•</span>
-                          <span>ID {task.id.slice(0, 8)}</span>
-                        </div>
-                      </div>
-
-                      {/* Description */}
-                      <p className="text-[13px] text-zinc-600 line-clamp-2 leading-relaxed">
-                        {task.description}
-                      </p>
-
-                      {/* Tech Stack Tags */}
-                      <div className="flex flex-wrap gap-1.5 pt-1">
-                        {skills.slice(0, 3).map((skill, idx) => (
-                          <span
-                            key={idx}
-                            className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-zinc-50 border border-zinc-200 text-zinc-600"
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Card Footer: Days left & View CTA */}
-                    <div className="flex items-center justify-between pt-5 mt-5 border-t border-zinc-100">
-                      <div className="flex items-center gap-1.5 text-[12px] font-mono text-zinc-500">
-                        <Clock className="size-3.5 text-zinc-400" />
-                        <span>Due {task.deadline}</span>
-                      </div>
-
-                      <button
-                        onClick={() => {
-                          setInspectedTask(task);
-                          setActiveDrawerTab("overview");
-                        }}
-                        className="px-4 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-[12.5px] font-medium transition-colors flex items-center gap-1 shadow-2xs"
-                      >
-                        <span>View</span>
-                        <ChevronRight className="size-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </div>
-
-      </div>
-
-      {/* INSPECTION MODAL / DRAWER (Matching improvise 1.png) */}
-      {inspectedTask && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl border border-zinc-200 shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
-            
-            {/* Modal Header */}
-            <div className="p-6 sm:p-7 border-b border-zinc-100 flex items-start justify-between bg-zinc-50/50">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-medium">
-                    {inspectedTask.title.includes("Security") ? "Security" : "Development"}
-                  </span>
-                  <span className="text-[11px] font-mono text-zinc-400">ID #{inspectedTask.id}</span>
-                </div>
-                <h2 className="text-[22px] font-medium text-zinc-900">
-                  {inspectedTask.title}
-                </h2>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="text-right">
-                  <span className="text-[11px] font-mono text-zinc-400 block uppercase">Reward</span>
-                  <span className="text-[22px] font-mono font-bold text-zinc-900">
-                    {inspectedTask.paymentRail === "Web2_Fiat"
-                      ? `${inspectedTask.rewardAmountFiat} ${inspectedTask.fiatCurrency || "USD"}`
-                      : `${inspectedTask.rewardAmountSOL} SOL`}
-                  </span>
-                </div>
-
-                <button
-                  onClick={() => setInspectedTask(null)}
-                  className="p-2 rounded-xl hover:bg-zinc-200/60 text-zinc-500 hover:text-zinc-800 transition-colors"
-                >
-                  <X className="size-5" />
-                </button>
-              </div>
-            </div>
-
-            {/* 5-Tab Navigation (Matching improvise 1.png) */}
-            <div className="flex items-center px-6 border-b border-zinc-200 bg-white overflow-x-auto">
-              {[
-                { id: "overview", label: "Overview" },
-                { id: "milestones", label: "Milestones" },
-                { id: "requirements", label: "Requirements" },
-                { id: "discussion", label: "Discussion" },
-                { id: "updates", label: "Updates" },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveDrawerTab(tab.id as any)}
-                  className={`px-4 py-3 text-[13.5px] font-medium border-b-2 transition-all whitespace-nowrap ${
-                    activeDrawerTab === tab.id
-                      ? "border-zinc-900 text-zinc-900"
-                      : "border-transparent text-zinc-500 hover:text-zinc-800"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Tab Contents */}
-            <div className="p-6 sm:p-8 overflow-y-auto flex-1 space-y-6">
-              {activeDrawerTab === "overview" && (
-                <div className="space-y-6">
-                  <div>
-                    <h4 className="text-[12px] font-mono uppercase text-zinc-400 font-semibold tracking-wider mb-2">
-                      Project Overview
-                    </h4>
-                    <p className="text-[14.5px] text-zinc-700 leading-relaxed">
-                      {inspectedTask.description}
-                    </p>
-                  </div>
-
-                  <div>
-                    <h4 className="text-[12px] font-mono uppercase text-zinc-400 font-semibold tracking-wider mb-3">
-                      Skills Required
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {getSkillsForTask(inspectedTask).map((skill, idx) => (
-                        <span
-                          key={idx}
-                          className="px-3 py-1 rounded-xl bg-zinc-100 text-zinc-800 text-[12.5px] font-mono font-medium border border-zinc-200"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4 pt-4 border-t border-zinc-100 text-[12.5px] font-mono">
-                    <div>
-                      <span className="text-zinc-400 block">POSTED</span>
-                      <span className="text-zinc-800 font-semibold">Sep 16, 2026</span>
-                    </div>
-                    <div>
-                      <span className="text-zinc-400 block">SETTLEMENT</span>
-                      <span className="text-zinc-800 font-semibold">
-                        {inspectedTask.paymentRail === "Web2_Fiat" ? "Fiat ACID Ledger" : "Solana PDA"}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-zinc-400 block">DEADLINE</span>
-                      <span className="text-zinc-800 font-semibold">{inspectedTask.deadline}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activeDrawerTab === "milestones" && (
-                <div className="space-y-4">
-                  <h4 className="text-[12px] font-mono uppercase text-zinc-400 font-semibold tracking-wider">
-                    Milestone Breakdown
-                  </h4>
-                  <div className="space-y-3">
-                    <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 flex items-center justify-between text-[13.5px]">
-                      <div className="flex items-center gap-3">
-                        <span className="size-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[11px] font-mono font-bold">1</span>
-                        <div>
-                          <div className="font-medium text-zinc-900">Architecture & Technical Spec</div>
-                          <div className="text-[12px] text-zinc-500">Schema designs, interfaces, and architecture diagrams</div>
-                        </div>
-                      </div>
-                      <span className="font-mono text-emerald-600 font-medium">33% Payout</span>
-                    </div>
-
-                    <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 flex items-center justify-between text-[13.5px]">
-                      <div className="flex items-center gap-3">
-                        <span className="size-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px] font-mono font-bold">2</span>
-                        <div>
-                          <div className="font-medium text-zinc-900">Core Engine Implementation</div>
-                          <div className="text-[12px] text-zinc-500">Full business logic and API route integration</div>
-                        </div>
-                      </div>
-                      <span className="font-mono text-blue-600 font-medium">33% Payout</span>
-                    </div>
-
-                    <div className="p-4 rounded-xl border border-zinc-200 bg-zinc-50 flex items-center justify-between text-[13.5px]">
-                      <div className="flex items-center gap-3">
-                        <span className="size-6 rounded-full bg-zinc-300 text-zinc-700 flex items-center justify-center text-[11px] font-mono font-bold">3</span>
-                        <div>
-                          <div className="font-medium text-zinc-900">Testing, CI & Final Verification</div>
-                          <div className="text-[12px] text-zinc-500">Automated unit/integration tests and production build verification</div>
-                        </div>
-                      </div>
-                      <span className="font-mono text-zinc-500 font-medium">34% Payout</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activeDrawerTab === "requirements" && (
-                <div className="space-y-4">
-                  <h4 className="text-[12px] font-mono uppercase text-zinc-400 font-semibold tracking-wider">
-                    Acceptance Criteria
-                  </h4>
-                  <div className="space-y-2.5">
-                    {inspectedTask.acceptanceCriteria.map((crit, idx) => (
-                      <div key={idx} className="p-3.5 rounded-xl border border-zinc-200 bg-zinc-50 flex items-start gap-3 text-[13.5px] text-zinc-800">
-                        <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
-                        <span>{crit}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {activeDrawerTab === "discussion" && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-[12px] font-mono uppercase text-zinc-400 font-semibold tracking-wider">
-                      Developer Discussion (2 threads)
-                    </h4>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200 space-y-2">
-                      <div className="flex items-center justify-between text-[12px] font-mono">
-                        <span className="font-semibold text-zinc-800">@solana_builder</span>
-                        <span className="text-zinc-400">2 days ago</span>
-                      </div>
-                      <p className="text-[13px] text-zinc-600">
-                        Does the settlement rail require Anchor 0.30 or standard web3.js 1.95?
-                      </p>
-                      <div className="p-3 rounded-lg bg-white border border-zinc-200 text-[12.5px] text-zinc-700">
-                        <span className="font-semibold text-blue-600 block mb-0.5">Sponsor Reply:</span>
-                        Anchor 0.30+ is preferred with serializable PDA seeds for idempotency.
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activeDrawerTab === "updates" && (
-                <div className="space-y-4">
-                  <h4 className="text-[12px] font-mono uppercase text-zinc-400 font-semibold tracking-wider">
-                    Protocol &amp; Bounty Changelog
-                  </h4>
-                  <div className="space-y-2 font-mono text-[12px]">
-                    <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-600 flex items-center justify-between">
-                      <span>✓ Escrow covenant funded and locked on-chain</span>
-                      <span className="text-zinc-400">Sep 16</span>
-                    </div>
-                    <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-600 flex items-center justify-between">
-                      <span>✓ Dual settlement rail verification active</span>
-                      <span className="text-zinc-400">Sep 16</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Bottom Sticky Banner (Matching improvise 1.png) */}
-            <div className="p-6 bg-zinc-50 border-t border-zinc-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="size-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 shrink-0">
-                  <Sparkles className="size-4" />
-                </div>
-                <div>
-                  <h5 className="text-[13.5px] font-semibold text-zinc-900">
-                    You're one step closer to getting paid!
-                  </h5>
-                  <p className="text-[12px] text-zinc-500">
-                    Bounties are released automatically after successful verification.
-                  </p>
-                </div>
-              </div>
-
+          <div className="flex items-center gap-3">
+            <div className="p-1 rounded-xl bg-zinc-100 border border-zinc-200/80 flex items-center gap-1 text-[12px] font-nav">
               <Link
-                href="/contributor"
-                className="cap-btn-primary px-6 h-10 text-[13px] whitespace-nowrap text-center flex items-center justify-center gap-1.5"
+                href="/tasks"
+                className="px-3.5 py-1.5 rounded-lg bg-white text-zinc-950 font-semibold shadow-xs flex items-center gap-1.5"
               >
-                <span>Work on this Bounty</span>
-                <ArrowRight className="size-3.5" />
+                <User className="size-3.5 text-zinc-700" />
+                <span>Find Bounties (Agents)</span>
+              </Link>
+              <Link
+                href="/dashboard"
+                className="px-3.5 py-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-1.5"
+              >
+                <Briefcase className="size-3.5" />
+                <span>Fund Bounty (Client)</span>
               </Link>
             </div>
 
+            <Link
+              href="/dashboard/tasks/new"
+              className="h-9 px-4 rounded-xl bg-[#111111] hover:bg-zinc-800 text-white font-cta text-[12.5px] transition-all flex items-center gap-1.5 shadow-xs"
+            >
+              <Plus className="size-3.5" />
+              <span>Post Bounty</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* SEARCH & FILTERS BAR matching ui/image.png */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+          
+          {/* Search Input matching ui/image.png */}
+          <div className="relative w-full md:w-[480px]">
+            <Search className="size-4 text-zinc-400 absolute left-4 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search bounties..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full h-11 pl-11 pr-4 rounded-2xl border border-zinc-200/90 bg-white text-[13.5px] font-body text-zinc-900 focus:outline-hidden focus:border-zinc-400 transition-colors placeholder:text-zinc-400 shadow-2xs"
+            />
+          </div>
+
+          {/* Three Dropdown Selectors matching ui/image.png */}
+          <div className="flex items-center gap-3 w-full md:w-auto justify-end">
+            
+            {/* Category Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setOpenDropdown(openDropdown === "category" ? null : "category")}
+                className="h-11 px-4 rounded-2xl border border-zinc-200/90 bg-white text-[13px] font-nav font-medium text-zinc-800 flex items-center gap-2 shadow-2xs hover:bg-zinc-50 transition-colors cursor-pointer"
+              >
+                <span>{selectedCategory}</span>
+                <ChevronDown className="size-3.5 text-zinc-500" />
+              </button>
+
+              {openDropdown === "category" && (
+                <div className="absolute right-0 mt-2 w-48 rounded-2xl border border-zinc-200 bg-white py-1.5 shadow-lg z-30 font-nav text-[13px]">
+                  {["All Categories", "Development", "Design", "Security", "Marketing", "Research"].map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => {
+                        setSelectedCategory(cat);
+                        setOpenDropdown(null);
+                      }}
+                      className={`w-full text-left px-4 py-2 hover:bg-zinc-50 transition-colors flex items-center justify-between ${
+                        selectedCategory === cat ? "font-semibold text-zinc-950 bg-zinc-50" : "text-zinc-600"
+                      }`}
+                    >
+                      <span>{cat}</span>
+                      {selectedCategory === cat && <CheckCircle2 className="size-3.5 text-zinc-900" />}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Budget Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setOpenDropdown(openDropdown === "budget" ? null : "budget")}
+                className="h-11 px-4 rounded-2xl border border-zinc-200/90 bg-white text-[13px] font-nav font-medium text-zinc-800 flex items-center gap-2 shadow-2xs hover:bg-zinc-50 transition-colors cursor-pointer"
+              >
+                <span>{selectedBudget}</span>
+                <ChevronDown className="size-3.5 text-zinc-500" />
+              </button>
+
+              {openDropdown === "budget" && (
+                <div className="absolute right-0 mt-2 w-44 rounded-2xl border border-zinc-200 bg-white py-1.5 shadow-lg z-30 font-nav text-[13px]">
+                  {["Budget", "Under $250", "$250 - $500", "$500 - $1,000", "$1,000+"].map((b) => (
+                    <button
+                      key={b}
+                      onClick={() => {
+                        setSelectedBudget(b);
+                        setOpenDropdown(null);
+                      }}
+                      className={`w-full text-left px-4 py-2 hover:bg-zinc-50 transition-colors flex items-center justify-between ${
+                        selectedBudget === b ? "font-semibold text-zinc-950 bg-zinc-50" : "text-zinc-600"
+                      }`}
+                    >
+                      <span>{b}</span>
+                      {selectedBudget === b && <CheckCircle2 className="size-3.5 text-zinc-900" />}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Sort Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setOpenDropdown(openDropdown === "sort" ? null : "sort")}
+                className="h-11 px-4 rounded-2xl border border-zinc-200/90 bg-white text-[13px] font-nav font-medium text-zinc-800 flex items-center gap-2 shadow-2xs hover:bg-zinc-50 transition-colors cursor-pointer"
+              >
+                <span>{selectedSort}</span>
+                <ChevronDown className="size-3.5 text-zinc-500" />
+              </button>
+
+              {openDropdown === "sort" && (
+                <div className="absolute right-0 mt-2 w-44 rounded-2xl border border-zinc-200 bg-white py-1.5 shadow-lg z-30 font-nav text-[13px]">
+                  {["Latest", "Oldest", "Highest Budget", "Most Proposals"].map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => {
+                        setSelectedSort(s);
+                        setOpenDropdown(null);
+                      }}
+                      className={`w-full text-left px-4 py-2 hover:bg-zinc-50 transition-colors flex items-center justify-between ${
+                        selectedSort === s ? "font-semibold text-zinc-950 bg-zinc-50" : "text-zinc-600"
+                      }`}
+                    >
+                      <span>{s}</span>
+                      {selectedSort === s && <CheckCircle2 className="size-3.5 text-zinc-900" />}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+          </div>
+        </div>
+
+        {/* 3-COLUMN BOUNTY GRID matching ui/image.png */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredBounties.map((bounty) => (
+            <div
+              key={bounty.id}
+              onClick={() => {
+                setSelectedBounty(bounty);
+                setShowApplyModal(true);
+              }}
+              className="group rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-2xs hover:border-zinc-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between cursor-pointer min-h-[190px]"
+            >
+              <div>
+                {/* Top Row: Category Badge (left) & Budget Range (right) */}
+                <div className="flex items-center justify-between mb-4">
+                  <span
+                    className={`px-3 py-1 rounded-full text-[12px] font-badge font-medium ${bounty.categoryBadgeClass}`}
+                  >
+                    {bounty.category}
+                  </span>
+                  <span className="text-[15px] font-bold text-zinc-900 tracking-tight font-stats">
+                    {bounty.budgetRange}
+                  </span>
+                </div>
+
+                {/* Middle: Title & Subtitle */}
+                <h3 className="text-[15.5px] font-heading font-semibold text-zinc-900 group-hover:text-zinc-600 transition-colors line-clamp-1">
+                  {bounty.title}
+                </h3>
+                <p className="text-[13px] font-body text-zinc-400 mt-1">
+                  {bounty.subtitle}
+                </p>
+              </div>
+
+              {/* Bottom Row: Proposals count & time ago */}
+              <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-[12.5px] text-zinc-400 font-medium font-body">
+                <span className="flex items-center gap-1.5 text-zinc-500">
+                  <span className="text-zinc-400">🍃</span>
+                  <span>{bounty.proposalsCount} proposals</span>
+                </span>
+                <span>{bounty.timeAgo}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {filteredBounties.length === 0 && (
+          <div className="py-20 text-center rounded-3xl border border-dashed border-zinc-200 bg-white mt-6">
+            <p className="text-zinc-500 text-[14px]">No bounties found matching your filters.</p>
+            <button
+              onClick={() => {
+                setSearchQuery("");
+                setSelectedCategory("All Categories");
+                setSelectedBudget("Budget");
+                setSelectedSort("Latest");
+              }}
+              className="mt-3 text-[13px] text-zinc-900 font-medium underline cursor-pointer"
+            >
+              Reset all filters
+            </button>
+          </div>
+        )}
+
+      </div>
+
+      {/* PROPOSAL APPLICATION MODAL */}
+      {showApplyModal && selectedBounty && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl border border-zinc-200 max-w-lg w-full p-6 sm:p-8 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+            <button
+              onClick={() => setShowApplyModal(false)}
+              className="absolute top-6 right-6 p-2 rounded-xl text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-colors"
+            >
+              <X className="size-4" />
+            </button>
+
+            <div className="flex items-center gap-2 mb-3">
+              <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-badge font-medium ${selectedBounty.categoryBadgeClass}`}>
+                {selectedBounty.category}
+              </span>
+              <span className="text-[12px] text-zinc-400">•</span>
+              <span className="text-[12px] font-medium text-emerald-600 flex items-center gap-1 font-body">
+                <Lock className="size-3" /> Escrow Locked & Verified
+              </span>
+            </div>
+
+            <h2 className="text-xl font-heading font-semibold text-zinc-950 mb-1">
+              {selectedBounty.title}
+            </h2>
+            <p className="text-[13px] font-body text-zinc-500 mb-5">
+              Budget: <span className="font-bold text-zinc-900">{selectedBounty.budgetRange}</span> • {selectedBounty.subtitle}
+            </p>
+
+            {selectedBounty.description && (
+              <div className="mb-5 p-4 rounded-2xl bg-zinc-50 border border-zinc-200/70 text-[13px] text-zinc-700 font-body leading-relaxed">
+                {selectedBounty.description}
+              </div>
+            )}
+
+            <form onSubmit={handleApply} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[12px] font-heading font-medium text-zinc-700 mb-1">
+                    Your Bid Amount ($ or SOL)
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. $450"
+                    value={bidAmount}
+                    onChange={(e) => setBidAmount(e.target.value)}
+                    className="w-full h-10 px-3.5 rounded-xl border border-zinc-200 bg-white text-[13px] font-body text-zinc-900 focus:outline-hidden focus:border-zinc-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[12px] font-heading font-medium text-zinc-700 mb-1">
+                    Estimated Delivery Time
+                  </label>
+                  <select
+                    value={deliveryDays}
+                    onChange={(e) => setDeliveryDays(e.target.value)}
+                    className="w-full h-10 px-3.5 rounded-xl border border-zinc-200 bg-white text-[13px] font-body text-zinc-900 focus:outline-hidden focus:border-zinc-400"
+                  >
+                    <option value="3 Days">3 Days</option>
+                    <option value="5 Days">5 Days</option>
+                    <option value="7 Days">7 Days</option>
+                    <option value="14 Days">14 Days</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[12px] font-heading font-medium text-zinc-700 mb-1">
+                  Cover Note / Proposed Deliverables
+                </label>
+                <textarea
+                  rows={3}
+                  required
+                  placeholder="Outline your approach, tech stack, and relevant experience..."
+                  value={coverLetter}
+                  onChange={(e) => setCoverLetter(e.target.value)}
+                  className="w-full p-3.5 rounded-xl border border-zinc-200 bg-white text-[13px] font-body text-zinc-900 focus:outline-hidden focus:border-zinc-400 resize-none"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowApplyModal(false)}
+                  className="h-10 px-4 rounded-xl border border-zinc-200 text-zinc-600 font-cta text-[13px] hover:bg-zinc-50 transition-colors"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={appliedSuccess}
+                  className="h-10 px-5 rounded-xl bg-zinc-950 text-white font-cta text-[13px] hover:bg-zinc-800 transition-colors flex items-center gap-2 shadow-xs disabled:opacity-50"
+                >
+                  {appliedSuccess ? (
+                    <>
+                      <CheckCircle2 className="size-4 text-emerald-400" />
+                      <span>Submitting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="size-3.5" />
+                      <span>Submit Proposal</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

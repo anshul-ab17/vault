@@ -1,22 +1,26 @@
-import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from "@solana/web3.js";
-import { EscrowTask, TaskStatus, PRICING_PLANS, SubscriptionPlan } from "@vault/shared";
+import { PublicKey } from "@solana/web3.js";
+import { PRICING_PLANS, SubscriptionPlan } from "@vault/shared";
 
+export const LAMPORTS_PER_SOL = 1_000_000_000;
 export const DEVNET_RPC = "https://api.devnet.solana.com";
-// Valid 32-byte base58 public keys for Solana Devnet
-export const VAULT_PROGRAM_ID = new PublicKey("11111111111111111111111111111111");
-export const PLATFORM_TREASURY_PUBKEY = new PublicKey("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin");
+export const VAULT_PROGRAM_ID_STR = "11111111111111111111111111111111";
+export const PLATFORM_TREASURY_PUBKEY_STR = "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin";
+
+export function getVaultProgramId(): PublicKey {
+  return new PublicKey(VAULT_PROGRAM_ID_STR);
+}
 
 export function deriveTaskPDA(taskId: string): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [Buffer.from("task"), Buffer.from(taskId)],
-    VAULT_PROGRAM_ID
+    getVaultProgramId()
   );
 }
 
 export function deriveVaultPDA(taskId: string): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [Buffer.from("vault"), Buffer.from(taskId)],
-    VAULT_PROGRAM_ID
+    getVaultProgramId()
   );
 }
 
